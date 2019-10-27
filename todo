@@ -6,8 +6,8 @@ DONE    Create Server
 DONE   	Create Client
 DONE   	Server and Client run on different system
     	Clients can send ready message to Server
-    	Server Generates random values for board (Jono) DONE* (Just needs to be tested)
-    	Server displays values and board
-    	Server sends Client board
-    	Client displays board sent
-    	Clients exit after board is recieved and displayed
+  *  	Server Generates random values for board (Jono) DONE* (Just needs to be tested)
+DONE   	Server displays values and board
+DONE  	Server sends Client board
+DONE  	Client displays board sent
+DONE   	Clients exit after board is recieved and displayed

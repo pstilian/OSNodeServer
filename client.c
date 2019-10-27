@@ -1,3 +1,5 @@
+// Peter Stilian, Donald Christensen, Jonathan Sellier, Emily Cardella
+
 /* this program shows how to create sockets for a client.
 it also shows how the client connects to a server socket.
 and sends a message to it. the server must already be running
