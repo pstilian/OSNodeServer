@@ -2,12 +2,12 @@ Write DONE after each piece of the code when it is functional (or you think it i
 Write your name next to the functionality you are currently working on so we dont get confused and do double work
 
 1st Submission: (DUE 29th)
-    Create Server
-    Create Client
-    Server and Client run on different system
-    Clients can send ready message to Server
-    Server Generates random values for board (Jono) DONE* (Just needs to be tested)
-    Server displays values and board
-    Server sends Client board
-    Client displays board sent
-    Clients exit after board is recieved and displayed
+DONE    Create Server
+DONE   	Create Client
+DONE   	Server and Client run on different system
+    	Clients can send ready message to Server
+    	Server Generates random values for board (Jono) DONE* (Just needs to be tested)
+    	Server displays values and board
+    	Server sends Client board
+    	Client displays board sent
+    	Clients exit after board is recieved and displayed
