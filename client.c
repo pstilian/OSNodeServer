@@ -16,6 +16,13 @@ specified in PORTNUM. This port number must also be specified in the server code
 #include<netdb.h>
 #define PORTNUM  10101 /* the port number that the server is listening to*/
 #define DEFAULT_PROTOCOL 0  /*constant for default protocol*/
+
+//shared memory
+typedef struct
+{
+    int value;
+} shared_mem;
+
 void main()
 {
    char gameBoard[4][4]=  {{'A','B','C','D'},
@@ -38,7 +45,10 @@ void main()
    /* before connecting the socket we need to set up the right         values in 
    the different fields of the structure server_addr 
    you can check the definition of this structure on your own*/
-   server = gethostbyname("osnode02"); 
+   char host[16];
+   printf("Enter the server name to connect to: (eg osnode02)\n");
+   scanf("%s", &host);
+   server = gethostbyname(host); 
    if (server == NULL){
       printf(" error trying to identify the machine where the server is running\n");
       exit(0);
