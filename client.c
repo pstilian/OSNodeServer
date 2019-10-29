@@ -90,7 +90,7 @@ void main()
 
    // Clear buffer
    buffer[0] =  '\0';
-
+   /*
    printf("Choose a letter:\n");
    bzero(buffer,1024);
    fgets(buffer,1024,stdin);
@@ -100,20 +100,21 @@ void main()
    if (status < 0){
       printf("error while sending client message to server\n");
    }
-   /* Read server response */
+   /* Read server response 
    bzero(buffer,1024);
    status = read(socketid, buffer, 1024);
    /* Upon successful completion, read() returns the number 
    of bytes actually read from the file associated with fields.
-   This number is never greater than nbyte. Otherwise, -1 is returned. */
+   This number is never greater than nbyte. Otherwise, -1 is returned. 
    if (status < 0) {
       perror("error while reading message from server");
       exit(1);
    }
+   /*
    printf("-------------\n");
    printf("%s",buffer);
    printf("-------------\n");
-
+   */
 
    /* this closes the socket*/
    close(socketid);

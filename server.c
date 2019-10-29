@@ -51,14 +51,9 @@ int main( int argc, char *argv[] ) {
     /* Now Server starts listening clients wanting to connect. No more than 5 
     clients allowed */
     listen(sockfd,5);
+    int i = 0;
     clilen = sizeof(cli_addr);
-
-
-
-
-
-
-
+    /////////////////old////////////////
     while (1) {
        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen);
        if (newsockfd < 0) {
@@ -81,6 +76,7 @@ int main( int argc, char *argv[] ) {
             close(newsockfd);
         }
     } /* end of while */
+    ////////////////Old///////////
 }
 
 /*
@@ -120,9 +116,11 @@ void doprocessing (int sock) {
                 k++;
             }
         }
-        
     }
     k = 0;
+    printf("-------------\n");
+    printf("%s",buffer);
+    printf("-------------\n");
     //Sends board in buffer to player
     status = write(sock,buffer,255);
     //bzero(buffer,1024);
@@ -147,7 +145,7 @@ void doprocessing (int sock) {
             }
         }
     }
-//  Resset Buffer to send back
+ //  Resset Buffer to send back
     buffer[0] = '\0';
 
     for(i = 0; i < 4; i++){
