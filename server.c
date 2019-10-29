@@ -25,9 +25,7 @@ void doprocessing (int sock);
 
 int main( int argc, char *argv[] ) {
 
-    
-    int client1 = 0;
-    int client2 = 0;
+    //int client_size[6];
     int sockfd, newsockfd, portno, clilen;
     char buffer[1024];
     struct sockaddr_in serv_addr, cli_addr;
@@ -50,10 +48,17 @@ int main( int argc, char *argv[] ) {
       perror("ERROR on binding");
       exit(1);
     }
-    /* Now Server starts listening clients wanting to connect. No       more than 5 
+    /* Now Server starts listening clients wanting to connect. No more than 5 
     clients allowed */
     listen(sockfd,5);
     clilen = sizeof(cli_addr);
+
+
+
+
+
+
+
     while (1) {
        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen);
        if (newsockfd < 0) {
@@ -92,7 +97,48 @@ void doprocessing (int sock) {
     int status;
     char buffer[1024];
     bzero(buffer,256);
-    status= read(sock,buffer,255);
+    //Loop to keep socket running until correct input is recieved
+    int go = 1;
+    while(go){
+        status = read(sock,buffer,255);
+        if(buffer[0] == 'y'){
+            bzero(buffer,1024);
+            printf("Im Ready! \n");
+            go = 0;
+        }
+    }
+    //bzero(buffer,1024);
+    //status = write(sock, buffer, 1024);
+
+    //Fills buffer with board.
+    for(i = 0; i < 4; i++){
+        for(j = 0; j < 4; j++){
+            buffer[k] = gameBoard[i][j];
+            k++;
+            if(j == 3){
+                buffer[k] = '\n';
+                k++;
+            }
+        }
+        
+    }
+    k = 0;
+    //Sends board in buffer to player
+    status = write(sock,buffer,255);
+    //bzero(buffer,1024);
+    //  Resset Buffer to send back
+    //buffer[0] = '\0';
+    // erases buffer
+    //bzero(buffer,1024);
+    //Needs to wait for input
+    while(1){
+        status= read(sock,buffer,255);
+        if(isalpha(buffer[0])){
+            break;
+        }
+    }
+    
+    
 
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
@@ -111,8 +157,6 @@ void doprocessing (int sock) {
                 k++;
                 buffer[k] = '\n';
                 k++;
-                printf("K =%d\n", k);
-                printf("buffer K = %d \n", buffer[k]);
                 continue;
             }
             buffer[k] = gameBoard[i][j];

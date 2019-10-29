@@ -30,20 +30,17 @@ void main()
    struct hostent *server;
    /* this creates the socket*/
    socketid = socket (AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
-   if (socketid < 0) 
-    {
+   if (socketid < 0) {
       printf( "error in creating client socket\n"); 
       exit (-1);
     }
     printf("created client socket successfully\n");
    /* before connecting the socket we need to set up the right         values in 
-the different fields of the structure server_addr 
+   the different fields of the structure server_addr 
    you can check the definition of this structure on your own*/
-    server = gethostbyname("osnode09"); 
-   if (server == NULL)
-   {
-      printf(" error trying to identify the machine where the    server is running\
-n");
+   server = gethostbyname("osnode02"); 
+   if (server == NULL){
+      printf(" error trying to identify the machine where the server is running\n");
       exit(0);
    }
    port = PORTNUM;
@@ -64,11 +61,42 @@ n");
     printf("connected client socket to the server socket \n");
    /* now lets send a message to the server. the message will be
    whatever the user wants to write to the server.*/
+
+   /* Read server response */
+   bzero(buffer,1024);
+   
+   char m[5];
+   int go = 1;
+   while(go) {
+      printf("press y if you are ready. ");
+      scanf("%c", &buffer);
+      //bzero(buffer,1024);
+      //gets(buffer);
+      //fgets(buffer,1024,stdin);
+      if(buffer[0] == 'y' || buffer[0] == 'Y'){
+         buffer[0] = 'y';
+         status = write(socketid, buffer, 1024);
+         go = 0;
+      }
+
+   }
+   
+   
+   //bzero(buffer,1024);
+   status = read(socketid, buffer, 1024);
+   printf("-------------\n");
+   printf("%s",buffer);
+   printf("-------------\n");
+
+   // Clear buffer
+   buffer[0] =  '\0';
+
    printf("Choose a letter:\n");
    bzero(buffer,1024);
    fgets(buffer,1024,stdin);
 
    status = write(socketid, buffer, strlen(buffer));
+   printf("%d", status);
    if (status < 0){
       printf("error while sending client message to server\n");
    }
