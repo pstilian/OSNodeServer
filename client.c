@@ -3,8 +3,8 @@
 /* this program shows how to create sockets for a client.
 it also shows how the client connects to a server socket.
 and sends a message to it. the server must already be running
-on a machine. The name of this machine must be entered in the function 
-gethostbyname in the code below. The port number where the server is listening is 
+on a machine. The name of this machine must be entered in the function
+gethostbyname in the code below. The port number where the server is listening is
 specified in PORTNUM. This port number must also be specified in the server code.
  * main program */
 #include<stdio.h>
@@ -30,6 +30,7 @@ void main()
                            {'I','J','K','L'},
                            {'M','N','O','P'}};
    int  port;
+   char host[16];
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
    char buffer[1024];   /* the message buffer*/
@@ -38,17 +39,17 @@ void main()
    /* this creates the socket*/
    socketid = socket (AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
    if (socketid < 0) {
-      printf( "error in creating client socket\n"); 
+      printf( "error in creating client socket\n");
       exit (-1);
     }
     printf("created client socket successfully\n");
-   /* before connecting the socket we need to set up the right         values in 
-   the different fields of the structure server_addr 
+
+   /* before connecting the socket we need to set up the right         values in
+   the different fields of the structure server_addr
    you can check the definition of this structure on your own*/
-   char host[16];
-   printf("Enter the server name to connect to: (eg osnode02)\n");
+   printf("Enter the server name to connect to (eg osnode02): \n");
    scanf("%s", &host);
-   server = gethostbyname(host); 
+   server = gethostbyname(host);
    if (server == NULL){
       printf(" error trying to identify the machine where the server is running\n");
       exit(0);
@@ -59,10 +60,10 @@ void main()
    serv_addr.sin_family = AF_INET;
    bcopy((char *)server->h_addr,
          (char *)&serv_addr.sin_addr.s_addr,
-         server->h_length); 
+         server->h_length);
    serv_addr.sin_port = htons(port);
    /* connecting the client socket to the server socket */
-   status = connect(socketid, (struct sockaddr *) &serv_addr, 
+   status = connect(socketid, (struct sockaddr *) &serv_addr,
                             sizeof(serv_addr));
    if (status < 0){
       printf( " error in connecting client socket with server    \n");
@@ -74,24 +75,26 @@ void main()
 
    /* Read server response */
    bzero(buffer,1024);
-   
+
    char m[5];
    int go = 1;
    while(go) {
-      printf("press y if you are ready. ");
+      printf("Select \"y\" if you are ready. Or \"n\" to exit ");
       scanf("%c", &buffer);
-      //bzero(buffer,1024);
-      //gets(buffer);
-      //fgets(buffer,1024,stdin);
-      if(buffer[0] == 'y' || buffer[0] == 'Y'){
+
+      if(buffer[0] == 'n' || buffer[0] == 'N'){
+        close(socketid);
+      }
+
+      else if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          status = write(socketid, buffer, 1024);
          go = 0;
       }
 
    }
-   
-   
+
+
    //bzero(buffer,1024);
    status = read(socketid, buffer, 1024);
    printf("-------------\n");
@@ -110,12 +113,12 @@ void main()
    if (status < 0){
       printf("error while sending client message to server\n");
    }
-   /* Read server response 
+   /* Read server response
    bzero(buffer,1024);
    status = read(socketid, buffer, 1024);
-   /* Upon successful completion, read() returns the number 
+   /* Upon successful completion, read() returns the number
    of bytes actually read from the file associated with fields.
-   This number is never greater than nbyte. Otherwise, -1 is returned. 
+   This number is never greater than nbyte. Otherwise, -1 is returned.
    if (status < 0) {
       perror("error while reading message from server");
       exit(1);
@@ -128,4 +131,4 @@ void main()
 
    /* this closes the socket*/
    close(socketid);
-} 
+}
