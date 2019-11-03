@@ -195,10 +195,6 @@ void doprocessing (int sock) {
           }
 
           status = semop(semid, &Wait, 1);
-          //status = write(sock, "Let the Games Begin!!\n", 23);
-          status = semop(semid, &Signal, 1);
-
-          status = semop(semid, &Wait, 1);
           //Fills buffer with board.
           // for(i = 0; i < 4; i++){
           //     for(j = 0; j < 4; j++){
@@ -211,7 +207,7 @@ void doprocessing (int sock) {
           //     }
           // }
           // k = 0;
-          
+
           status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
           printf("-------------\n");
           printf("%s",buffer);
