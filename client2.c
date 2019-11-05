@@ -98,8 +98,9 @@ void main()
    go = 1;
 
    // Prints the initial Gameboard
-   printf("%s",buffer);
+   //printf("%s",buffer);
    bzero(buffer,1024);
+   status = read(socketid, buffer, 255);
 
 
    printf("Select a Letter: \n");

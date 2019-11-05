@@ -202,10 +202,11 @@ void doprocessing (int sock) {
           // run the game
           rungame(sock);
     }
+  }
 }
 
-
 void rungame(sock){
+  char buffer[1024];
   while(sharedData->numSelected < 16){
     bzero(buffer,256);
     status = read(sock, buffer, 255); //recieving letter from client
@@ -213,6 +214,5 @@ void rungame(sock){
       perror("ERROR reading from socket");
       exit(1);
     }
-
   }
 }
