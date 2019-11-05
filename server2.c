@@ -21,6 +21,7 @@ typedef struct{
   int numClients;
   char letterBoard[36];
   int waitVal;
+  int numSelected;
   int sockID[5];
 }shared_mem;
 shared_mem *sharedData;
@@ -108,6 +109,7 @@ int main( int argc, char *argv[] ) {
     sharedData->numClients = 0;
     strcpy(sharedData->letterBoard, letters);
     sharedData->waitVal = 0;
+    sharedData->numSelected = 0;
 
     while (1) {
        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen);
@@ -187,9 +189,9 @@ void doprocessing (int sock) {
 
           // Prints letterboard to server
           status = semop(semid, &Wait, 1);
-          printf("-------------\n");
+          //printf("-------------\n");
           //printf("%s",sharedData->letterBoard);
-          printf("-------------\n");
+          //printf("-------------\n");
           status = semop(semid, &Signal, 1);
 
           // Sends letterboard to clients
@@ -204,21 +206,13 @@ void doprocessing (int sock) {
 
 
 void rungame(sock){
-  while(1){
-      status = semop(semid, &Wait, 1);
-      read(sock,buffer,1024);
-      for(i = 0; i < strlen(sharedData->letterBoard); i++){
-          printf("4");
-          if(sharedData->letterBoard[i] == buffer[0]){
-            printf("5");
-            sharedData->letterBoard[i] = '-';
-            printf("6");
-          }
-      bzero(buffer,1024);
-      }
-      status = semop(semid, &Signal, 1);
-  }
+  while(sharedData->numSelected < 16){
+    bzero(buffer,256);
+    status = read(sock, buffer, 255); //recieving letter from client
+    if (status < 0){
+      perror("ERROR reading from socket");
+      exit(1);
+    }
 
-    //Stops here at semop...
-    status = semop(semid, &Signal, 1);
+  }
 }

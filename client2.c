@@ -113,7 +113,6 @@ void main()
    write(socketid,buffer,1024);
 
    while(go){
-      printf("1");
       bzero(buffer,1024);
       status = read(socketid, buffer, 1024);
       if(buffer[0] != '\0'){
