@@ -14,14 +14,9 @@ specified in PORTNUM. This port number must also be specified in the server code
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<netdb.h>
+#include<pthread.h>
 #define PORTNUM  10101 /* the port number that the server is listening to*/
 #define DEFAULT_PROTOCOL 0  /*constant for default protocol*/
-
-//shared memory
-typedef struct
-{
-    int value;
-} shared_mem;
 
 void main()
 {
@@ -30,9 +25,18 @@ void main()
    char host[16];
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
-   char buffer[1024];   /* the message buffer*/
+   char buffer[255];   /* the message buffer*/
    struct sockaddr_in serv_addr;
    struct hostent *server;
+
+   // Declaring mutexs
+   pthread_mutex_t mutex_read, mutex_write;
+   pthread_attr_t attr;
+
+   // Lock mutexs
+   pthread_mutex_lock(&mutex_read);
+   pthread_mutex_lock(&mutex_write);
+
    /* this creates the socket*/
    socketid = socket (AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
    if (socketid < 0) {
@@ -74,15 +78,15 @@ void main()
     printf("Select \"y\" if you are ready. Or \"n\" to exit.\n");
    while(go) {
       //gets y or n for player ready
-      fgets(buffer, 1024, stdin);
+      fgets(buffer, 255, stdin);
       if(buffer[0] == 'n' || buffer[0] == 'N'){
         close(socketid);
       }
       else if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          //writes waiting on other player from server
-         status = write(socketid, buffer, 1024);
-         bzero(buffer,1024);
+         status = write(socketid, buffer, 255);
+         bzero(buffer,255);
          go = 0;
       }
 
@@ -91,7 +95,7 @@ void main()
    // This while loop causes the program to wait we need to replace this with a mutex/semaphore
    go = 1;
    while(go){
-      if(read(socketid,buffer,1024) != '\0'){;
+      if(read(socketid,buffer,255) != '\0'){;
          go = 0;
       }
    }
@@ -99,36 +103,18 @@ void main()
 
    // Prints the initial Gameboard
    //printf("%s",buffer);
-   bzero(buffer,1024);
+   bzero(buffer,255);
    status = read(socketid, buffer, 255);
 
-
-   printf("Select a Letter: \n");
-   while(go){
-      fgets(buffer, 1024, stdin);
-      if(buffer[0] == 'a'){
-         go = 0;
-      }
-   }
-   go = 1;
-   write(socketid,buffer,1024);
+   // Prints letterboard and ask for selection
+   printf("%s\nSelect a Letter: \n", buffer);
 
    while(go){
-      bzero(buffer,1024);
-      status = read(socketid, buffer, 1024);
-      if(buffer[0] != '\0'){
-         printf("2");
-         printf("-------------\n");
-         printf("%s",buffer);
-         printf("-------------\n");
-
-         printf("next move: \n");
-         fgets(buffer, 1024, stdin);
-         status = write(socketid, buffer, 1024);
-
-         bzero(buffer,1024);
-         break;
-      }
+      bzero(buffer,255);
+      fgets(buffer, 255, stdin);
+      status = write(socetid, buffer, 255);
+      status = read(socketid, buffer, 255);
+      printf("%s\nSelect a Letter: \n", buffer);      
    }
 
    /* this closes the socket*/
