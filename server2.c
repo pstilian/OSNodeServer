@@ -19,6 +19,7 @@
 // Defining Shared Memory
 typedef struct{
   int numClients;
+  int ready;
   char letterBoard[36];
 }shared_mem;
 shared_mem *sharedData;
@@ -35,6 +36,7 @@ static struct sembuf Signal = {0,1,0};
 
 // Declared Functions
 void doprocessing (int sock);
+void rungame(int sock);
 
 // Global Variables
 int numReady, status, semStatus, semid, semnum, semval;
@@ -184,32 +186,39 @@ void doprocessing (int sock) {
           }
 
           status = semop(semid, &Wait, 1);
+          //Should get Board
           status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
-
+          //not printing board
           printf("-------------\n");
           printf("%s",sharedData->letterBoard);
           printf("-------------\n");
           status = semop(semid, &Signal, 1);
-
+          
           rungame(sock);
     }
 }
 
 
 void rungame(sock){
+  int i = 0;
+  char buffer[1024];
+  //Starts player 0 turn
+  sharedData->ready = 0;
   while(sharedData->numClients == 2){
-      status = semop(semid, &Wait, 1);
-      read(sock,buffer,1024);
-      for(i = 0; i < strlen(sharedData->letterBoard); i++){
+      //For turns we flip ready flag
+        //dont think we need semop if we use ready var
+        status = semop(semid, &Wait, 1);
+        while(read(sock,buffer,1024) == '\0'){}
+
+        for(i = 0; i < strlen(sharedData->letterBoard); i++){
           printf("4");
           if(sharedData->letterBoard[i] == buffer[0]){
             printf("5");
             sharedData->letterBoard[i] = '-';
             printf("6");
           }
-      bzero(buffer,1024);
-      }
-      status = semop(semid, &Signal, 1);
+          bzero(buffer,1024);
+        }
   }
 
     //Stops here at semop...
