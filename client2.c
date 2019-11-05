@@ -80,7 +80,7 @@ void main()
     }
 
    // Prints the initial Gameboard
-   //bzero(buffer,255);
+   bzero(buffer,255);
    status = read(socketid, buffer, 255);
 
    // Prints letterboard and ask for selection

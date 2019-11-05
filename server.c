@@ -156,11 +156,8 @@ int main( int argc, char *argv[] ) {
    semiphre swap to maintain correct state when entering critical section.
 */
 void doprocessing (int sock) {
-    int i = 0;
-    int j = 0;
-    int k = 0;
     int status;
-    char buffer[1024];
+    char buffer[255];
     //bzero(buffer,256);
     //Loop to keep socket running until correct input is recieved
     int go = 1;
