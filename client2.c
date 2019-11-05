@@ -80,7 +80,7 @@ void main()
     }
 
    // Prints the initial Gameboard
-   bzero(buffer,255);
+   //bzero(buffer,255);
    status = read(socketid, buffer, 255);
 
    // Prints letterboard and ask for selection
@@ -90,7 +90,7 @@ void main()
    while(go){
       bzero(buffer,255);
       fgets(buffer, 255, stdin);
-      status = write(socetid, buffer, 255);
+      status = write(socketid, buffer, 255);
       status = read(socketid, buffer, 255);
       printf("%s\nSelect a Letter: \n", buffer);
    }
