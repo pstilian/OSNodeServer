@@ -154,12 +154,8 @@ int main( int argc, char *argv[] ) {
    semiphre swap to maintain correct state when entering critical section.
 */
 void doprocessing (int sock) {
-    int i = 0;
-    int j = 0;
-    int k = 0;
     int status;
     char buffer[1024];
-    //bzero(buffer,256);
     //Loop to keep socket running until correct input is recieved
     int go = 1;
 
@@ -183,37 +179,39 @@ void doprocessing (int sock) {
           //waits for both players
           while(sharedData->numClients < 2){}
             if(sharedData->numClients == 2){
-              write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
               status = semop(semid, &Signal, 1);
             }
-
-            status = semop(semid, &Wait, 1);
           }
+
+          status = semop(semid, &Wait, 1);
+          status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
 
           printf("-------------\n");
           printf("%s",sharedData->letterBoard);
           printf("-------------\n");
-
-        while(sharedData->numClients == 2){
-            status = semop(semid, &Wait, 1);
-            read(sock,buffer,1024);
-            for(i = 0; i < strlen(sharedData->letterBoard); i++){
-                printf("4");
-                if(sharedData->letterBoard[i] == buffer[0]){
-                  printf("5");
-                  sharedData->letterBoard[i] = '-';
-                  printf("6");
-                }
-            bzero(buffer,1024);
-            }
-            status = semop(semid, &Signal, 1);
-        }
-
-          //Stops here at semop...
           status = semop(semid, &Signal, 1);
+
+          rungame(sock);
     }
 }
 
-void game(){
 
+void rungame(sock){
+  while(sharedData->numClients == 2){
+      status = semop(semid, &Wait, 1);
+      read(sock,buffer,1024);
+      for(i = 0; i < strlen(sharedData->letterBoard); i++){
+          printf("4");
+          if(sharedData->letterBoard[i] == buffer[0]){
+            printf("5");
+            sharedData->letterBoard[i] = '-';
+            printf("6");
+          }
+      bzero(buffer,1024);
+      }
+      status = semop(semid, &Signal, 1);
+  }
+
+    //Stops here at semop...
+    status = semop(semid, &Signal, 1);
 }
