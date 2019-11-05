@@ -20,6 +20,7 @@
 typedef struct{
   int numClients;
   char letterBoard[36];
+  int waitVal;
 }shared_mem;
 shared_mem *sharedData;
 
