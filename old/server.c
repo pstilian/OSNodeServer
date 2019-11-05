@@ -20,14 +20,14 @@ char gameBoardMap[4][4] =   {{'-','-','-','-'},
                              {'-','-','-','-'},
                              {'-','-','-','-'},
                              {'-','-','-','-'}};
-
+void rungame(int sock);
 void doprocessing (int sock);
+char buffer[256];
 
 int main( int argc, char *argv[] ) {
 
     //int client_size[6];
     int sockfd, newsockfd, portno, clilen;
-    char buffer[1024];
     struct sockaddr_in serv_addr, cli_addr;
     int status, pid;
     /* First call to socket() function */
@@ -91,14 +91,13 @@ void doprocessing (int sock) {
     int j = 0;
     int k = 0;
     int status;
-    char buffer[1024];
     bzero(buffer,256);
     //Loop to keep socket running until correct input is recieved
     int go = 1;
     while(go){
-        status = read(sock,buffer,255);
+        status = read(sock,buffer,256);
         if(buffer[0] == 'y'){
-            bzero(buffer,1024);
+            bzero(buffer,256);
             printf("Im Ready! \n");
             go = 0;
         }
@@ -122,21 +121,23 @@ void doprocessing (int sock) {
     printf("%s",buffer);
     printf("-------------\n");
     //Sends board in buffer to player
-    status = write(sock,buffer,255);
-    //bzero(buffer,1024);
-    //  Resset Buffer to send back
-    //buffer[0] = '\0';
-    // erases buffer
-    //bzero(buffer,1024);
+    status = write(sock,buffer,256);
+
     //Needs to wait for input
-    while(1){
-        status= read(sock,buffer,255);
-        if(isalpha(buffer[0])){
-            break;
-        }
-    }
-    
-    
+     printf("Running game\n");
+     char letter;
+     int index;
+     while(1){
+         //bzero(buffer,256);
+         status = read(sock, buffer, 256);
+         if(status < 0) printf("READ error\n");
+         printf("Buffer is:%s:", buffer);
+         letter = buffer[0];
+         index = letter - 'a';
+         i = index/4;
+         j = index%4;
+         printf("%c -> %c\n",buffer[0], gameBoard[i][j]);
+     }
 
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
@@ -168,10 +169,15 @@ void doprocessing (int sock) {
     }
 
     printf("Here is the Board: \n%s\n",buffer);
-    status= write(sock,buffer,1024);
+    status= write(sock,buffer,256);
 
     if (status < 0) {
         perror("ERROR writing to socket");
         exit(1);
     }
+
+    rungame(sock);
+}
+
+void rungame(int sock){
 }
