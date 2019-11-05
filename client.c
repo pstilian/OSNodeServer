@@ -22,7 +22,7 @@ void main()
    int  port;
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
-   char buffer[1024];   /* the message buffer*/
+   char buffer[256];   /* the message buffer*/
    struct sockaddr_in serv_addr;
    struct hostent *server;
    /* this creates the socket*/
@@ -63,7 +63,7 @@ void main()
    whatever the user wants to write to the server.*/
 
    /* Read server response */
-   bzero(buffer,1024);
+   bzero(buffer,256);
 
    char m[5];
    int go = 1;
@@ -75,7 +75,7 @@ void main()
       //fgets(buffer,1024,stdin);
       if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
-         status = write(socketid, buffer, 1024);
+         status = write(socketid, buffer, 256);
          go = 0;
       }
 
@@ -83,26 +83,26 @@ void main()
 
 
    //bzero(buffer,1024);
-   status = read(socketid, buffer, 1024);
+   status = read(socketid, buffer, 256);
    printf("-------------\n");
    printf("%s",buffer);
    printf("-------------\n");
 
    // Clear buffer
-   bzero(buffer,1024);
+   bzero(buffer,256);
 
    printf("Choose a letter:\n");
-   bzero(buffer,1024);
-   fgets(buffer,1024,stdin);
+   bzero(buffer,256);
+   fgets(buffer,256,stdin);
 
-   status = write(socketid, buffer, strlen(buffer));
+   status = write(socketid, buffer, 256);
    printf("%d", status);
    if (status < 0){
       printf("error while sending client message to server\n");
    }
    //Read server response
-   bzero(buffer,1024);
-   status = read(socketid, buffer, 1024);
+   bzero(buffer,256);
+   status = read(socketid, buffer, 256);
    /* Upon successful completion, read() returns the number
    of bytes actually read from the file associated with fields.
    This number is never greater than nbyte. Otherwise, -1 is returned. */
@@ -116,11 +116,11 @@ void main()
    printf("-------------\n");
    printf("Select a letter: \n");
 
-   while(go){
-      bzero(buffer,255);
-      fgets(buffer, 255, stdin);
-      status = write(socketid, buffer, 255);
-      status = read(socketid, buffer, 255);
+   while(1){
+      bzero(buffer,256);
+      fgets(buffer, 256, stdin);
+      status = write(socketid, buffer, 256);
+      status = read(socketid, buffer, 256);
       printf("%s\nSelect a Letter: \n", buffer);
    }
 
