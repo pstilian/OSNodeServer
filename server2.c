@@ -190,12 +190,16 @@ void doprocessing (int sock) {
            // first case if not enough players
           if(sharedData->numClients < 2) status = write(sock, "Waiting on other players.\n", 28);
           // second case 2 players ready
+          //waits for both players
+          while(sharedData->numClients < 2){}
           if(sharedData->numClients == 2){
-            status = semop(semid, &Signal, 1);
+            write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
+            //status = semop(semid, &Signal, 1);
           }
-          printf("semop");
+          
           status = semop(semid, &Wait, 1);
-          printf("semop");
+        }
+
           //Fills buffer with board.
           // for(i = 0; i < 4; i++){
           //     for(j = 0; j < 4; j++){
@@ -208,27 +212,66 @@ void doprocessing (int sock) {
           //     }
           // }
           // k = 0;
+          /*
           if(sharedData->numClients == 2){
+            printf("1");
             status = read(sock,buffer,1024);
+            printf("2");
             if(buffer[0] != '\0'){
+              printf("3");
               for(i = 0; i < strlen(sharedData->letterBoard); i++){
+                printf("4");
                 if(sharedData->letterBoard[i] == buffer[0]){
+                  printf("5");
                   sharedData->letterBoard[i] = '-';
+                  printf("6");
                 }
               }
               buffer[0] = '\0';
               status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
             }
           }
-          
+          */
+
           printf("-------------\n");
           printf("%s",sharedData->letterBoard);
           printf("-------------\n");
+
+
+
+        while(sharedData->numClients == 2){
+            status = semop(semid, &Wait, 1);
+            read(sock,buffer,1024);
+            for(i = 0; i < strlen(sharedData->letterBoard); i++){
+                printf("4");
+                if(sharedData->letterBoard[i] == buffer[0]){
+                  printf("5");
+                  sharedData->letterBoard[i] = '-';
+                  printf("6");
+                }
+            bzero(buffer,1024);
+            }
+            status = semop(semid, &Signal, 1);
+        }
+
+
+
+
+
+
           //Sends board in buffer to player
           //status = write(sock,buffer,255);
+
+          //Stops here at semop...
           status = semop(semid, &Signal, 1);
-        }
+      }
     }
+
+
+
+
+
+
 
 /*
      //Needs to wait for input
@@ -277,4 +320,4 @@ void doprocessing (int sock) {
         exit(1);
     }
     */
-}
+//}//

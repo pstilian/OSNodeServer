@@ -74,18 +74,18 @@ void main()
    whatever the user wants to write to the server.*/
 
    /* Read server response */
-   bzero(buffer,1024);
+   //bzero(buffer,1024);
 
-   char m[5];
+   //char m[5];
    int go = 1;
+   //works
+   printf("Select \"y\" if you are ready. Or \"n\" to exit ");
+   //works
    while(go) {
-      printf("Select \"y\" if you are ready. Or \"n\" to exit ");
-      scanf("%c", &buffer);
-
+      fgets(buffer, 1024, stdin);
       if(buffer[0] == 'n' || buffer[0] == 'N'){
         close(socketid);
       }
-
       else if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          status = write(socketid, buffer, 1024);
@@ -94,11 +94,25 @@ void main()
       }
 
    }
-
-   //bzero(buffer,1024);
-   status = read(socketid, buffer, 1024);
+   go = 1;
+   while(go){
+      if(read(socketid,buffer,1024) != '\0'){
+         printf("GO");
+         go = 0;
+      }
+   }
+   //status = read(socketid, buffer, 1024);
    printf("%s",buffer);
+   bzero(buffer,1024);
+   
+   //bzero(buffer,1024);
+   //doesnt print hello
+   //printf("hello");
    // Clear buffer
+   
+   printf("\nMake a Move: ");
+   fgets(buffer, 1024, stdin);
+   write(socketid,buffer,28);
    buffer[0] = '\0';
    while(1){
       status = read(socketid, buffer, 1024);
@@ -109,7 +123,7 @@ void main()
          printf("-------------\n");
 
          printf("next move");
-         scanf("%c", buffer);
+         fgets(buffer, 1024, stdin);
          status = write(socketid, buffer, 1024);
 
          buffer[0] = '\0';
