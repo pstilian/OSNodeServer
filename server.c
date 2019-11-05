@@ -20,6 +20,8 @@
 typedef struct{
   int numClients;
   char letterBoard[36];
+  char valueBoard[36];
+  int selections; //used to determine when all letters have been selected
 }shared_mem;
 shared_mem *sharedData;
 
@@ -238,7 +240,6 @@ void doprocessing (int sock) {
 
  //  Resset Buffer to send back
     buffer[0] = '\0';
-
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
             if( j == 3 ){

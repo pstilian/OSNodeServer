@@ -25,10 +25,7 @@ typedef struct
 
 void main()
 {
-   char gameBoard[4][4]=  {{'A','B','C','D'},
-                           {'E','F','G','H'},
-                           {'I','J','K','L'},
-                           {'M','N','O','P'}};
+   int go = 1;
    int  port;
    char host[16];
    int  socketid;      /*will hold the id of the socket created*/
@@ -62,6 +59,7 @@ void main()
          (char *)&serv_addr.sin_addr.s_addr,
          server->h_length);
    serv_addr.sin_port = htons(port);
+
    /* connecting the client socket to the server socket */
    status = connect(socketid, (struct sockaddr *) &serv_addr,
                             sizeof(serv_addr));
@@ -70,17 +68,10 @@ void main()
       exit(-1);
    }
     printf("connected client socket to the server socket \n");
-   /* now lets send a message to the server. the message will be
-   whatever the user wants to write to the server.*/
 
-   /* Read server response */
-   //bzero(buffer,1024);
-
-   //char m[5];
+    // This section takes a ready command from client in order to proceed when there are 2 players
    int go = 1;
-   //works
-   printf("Select \"y\" if you are ready. Or \"n\" to exit ");
-   //works
+   printf("Select \"y\" if you are ready. Or \"n\" to exit.\n");
    while(go) {
       fgets(buffer, 1024, stdin);
       if(buffer[0] == 'n' || buffer[0] == 'N'){
@@ -89,32 +80,31 @@ void main()
       else if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          status = write(socketid, buffer, 1024);
-         buffer[0] = '\0';
+         bzero(buffer,1024);
          go = 0;
       }
 
    }
+
+   // This while loop causes the program to wait we need to replace this with a mutex/semaphore
    go = 1;
    while(go){
-      if(read(socketid,buffer,1024) != '\0'){
-         printf("GO");
+      if(read(socketid,buffer,1024) != '\0'){;
          go = 0;
       }
    }
-   //status = read(socketid, buffer, 1024);
+
+   // Prints the initial Gameboard
    printf("%s",buffer);
    bzero(buffer,1024);
-   
-   //bzero(buffer,1024);
-   //doesnt print hello
-   //printf("hello");
-   // Clear buffer
-   
-   printf("\nMake a Move: ");
+
+
+   printf("Select a Letter: \n");
    fgets(buffer, 1024, stdin);
    write(socketid,buffer,28);
-   buffer[0] = '\0';
-   while(1){
+
+   while(go){
+      bzero(buffer,1024);
       status = read(socketid, buffer, 1024);
       if(buffer[0] != '\0'){
 
@@ -122,39 +112,14 @@ void main()
          printf("%s",buffer);
          printf("-------------\n");
 
-         printf("next move");
+         printf("next move: \n");
          fgets(buffer, 1024, stdin);
          status = write(socketid, buffer, 1024);
 
-         buffer[0] = '\0';
+         bzero(buffer,1024);
          break;
       }
    }
-   /*
-   printf("Choose a letter:\n");
-   bzero(buffer,1024);
-   fgets(buffer,1024,stdin);
-
-   status = write(socketid, buffer, strlen(buffer));
-   printf("%d", status);
-   if (status < 0){
-      printf("error while sending client message to server\n");
-   }
-   /* Read server response
-   bzero(buffer,1024);
-   status = read(socketid, buffer, 1024);
-   /* Upon successful completion, read() returns the number
-   of bytes actually read from the file associated with fields.
-   This number is never greater than nbyte. Otherwise, -1 is returned.
-   if (status < 0) {
-      perror("error while reading message from server");
-      exit(1);
-   }
-   /*
-   printf("-------------\n");
-   printf("%s",buffer);
-   printf("-------------\n");
-   */
 
    /* this closes the socket*/
    close(socketid);
