@@ -70,7 +70,6 @@ void main()
     printf("connected client socket to the server socket \n");
 
     // This section takes a ready command from client in order to proceed when there are 2 players
-   int go = 1;
    printf("Select \"y\" if you are ready. Or \"n\" to exit.\n");
    while(go) {
       fgets(buffer, 1024, stdin);
