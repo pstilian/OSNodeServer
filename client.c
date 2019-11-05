@@ -17,18 +17,8 @@ specified in PORTNUM. This port number must also be specified in the server code
 #define PORTNUM  10101 /* the port number that the server is listening to*/
 #define DEFAULT_PROTOCOL 0  /*constant for default protocol*/
 
-//shared memory
-typedef struct
-{
-    int value;
-} shared_mem;
-
 void main()
 {
-   char gameBoard[4][4]=  {{'A','B','C','D'},
-                           {'E','F','G','H'},
-                           {'I','J','K','L'},
-                           {'M','N','O','P'}};
    int  port;
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
