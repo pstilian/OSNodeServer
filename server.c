@@ -35,16 +35,6 @@ union{
 static struct sembuf Wait   = {0,-1,0};
 static struct sembuf Signal = {0,1,0};
 
-//Initialized a matrix and testMap that needs ints
-char gameBoard[4][4]=       {{'A','B','C','D'},
-                             {'E','F','G','H'},
-                             {'I','J','K','L'},
-                             {'M','N','O','P'}};
-char gameBoardMap[4][4] =   {{'-','-','-','-'},
-                             {'-','-','-','-'},
-                             {'-','-','-','-'},
-                             {'-','-','-','-'}};
-
 // Declared Functions
 void doprocessing (int sock);
 
@@ -188,32 +178,21 @@ void doprocessing (int sock) {
         if(buffer[0] == 'y'){
           // Increase the number of clients for each call
           sharedData->numClients++;
-          printf("%d Clients Connected", sharedData->numClients);
+          printf("%d Clients Connected\n", sharedData->numClients);
            // Check to see if at least 2 players are ready
            // first case if not enough players
           if(sharedData->numClients < 2) status = write(sock, "Waiting on other players.\n", 28);
           // second case 2 players ready
           if(sharedData->numClients == 2){
+            printf("Enough Clients Connected\n");
             status = semop(semid, &Signal, 1);
           }
 
           status = semop(semid, &Wait, 1);
-          //Fills buffer with board.
-          // for(i = 0; i < 4; i++){
-          //     for(j = 0; j < 4; j++){
-          //         buffer[k] = gameBoard[i][j];
-          //         k++;
-          //         if(j == 3){
-          //             buffer[k] = '\n';
-          //             k++;
-          //         }
-          //     }
-          // }
-          // k = 0;
-
+          printf("Starting to write board\n");
           status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
           printf("-------------\n");
-          printf("%s",buffer);
+          printf("%s",sharedData->letterBoard);
           printf("-------------\n");
           //Sends board in buffer to player
           //status = write(sock,buffer,255);
@@ -228,30 +207,6 @@ void doprocessing (int sock) {
         status= read(sock,buffer,255);
         if(isalpha(buffer[0])){
             break;
-        }
-    }
-
-    for(i = 0; i < 4; i++){
-        for(j = 0; j < 4; j++){
-            if(gameBoard[i][j] == buffer[0]){
-                gameBoard[i][j] = gameBoardMap[i][j];
-            }
-        }
-    }
-
- //  Resset Buffer to send back
-    buffer[0] = '\0';
-    for(i = 0; i < 4; i++){
-        for(j = 0; j < 4; j++){
-            if( j == 3 ){
-                buffer[k] = gameBoard[i][j];
-                k++;
-                buffer[k] = '\n';
-                k++;
-                continue;
-            }
-            buffer[k] = gameBoard[i][j];
-            k++;
         }
     }
 
