@@ -73,12 +73,14 @@ void main()
     go = 1;
     printf("Select \"y\" if you are ready. Or \"n\" to exit.\n");
    while(go) {
+      //gets y or n for player ready
       fgets(buffer, 1024, stdin);
       if(buffer[0] == 'n' || buffer[0] == 'N'){
         close(socketid);
       }
       else if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
+         //writes waiting on other player from server
          status = write(socketid, buffer, 1024);
          bzero(buffer,1024);
          go = 0;
@@ -93,6 +95,7 @@ void main()
          go = 0;
       }
    }
+   go = 1;
 
    // Prints the initial Gameboard
    printf("%s",buffer);
@@ -100,14 +103,21 @@ void main()
 
 
    printf("Select a Letter: \n");
-   fgets(buffer, 1024, stdin);
-   write(socketid,buffer,28);
+   while(go){
+      fgets(buffer, 1024, stdin);
+      if(buffer[0] == 'a'){
+         go = 0;
+      }
+   }
+   go = 1;
+   write(socketid,buffer,1024);
 
    while(go){
+      printf("1");
       bzero(buffer,1024);
       status = read(socketid, buffer, 1024);
       if(buffer[0] != '\0'){
-
+         printf("2");
          printf("-------------\n");
          printf("%s",buffer);
          printf("-------------\n");
