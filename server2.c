@@ -19,9 +19,9 @@
 // Defining Shared Memory
 typedef struct{
   int numClients;
-  int ready;
   char letterBoard[36];
   int waitVal;
+  int sockID[5];
 }shared_mem;
 shared_mem *sharedData;
 
@@ -37,7 +37,7 @@ static struct sembuf Signal = {0,1,0};
 
 // Declared Functions
 void doprocessing (int sock);
-void rungame(int sock);
+void rungame (int sock);
 
 // Global Variables
 int numReady, status, semStatus, semid, semnum, semval;
@@ -52,7 +52,7 @@ int main( int argc, char *argv[] ) {
     int sockfd, newsockfd, portno, clilen;
     char buffer[1024];
     struct sockaddr_in serv_addr, cli_addr;
-    int status, pid;
+    int status, pid, temp;
     shmadd = (char *) 0;
 
     // Generating Shared Memory
@@ -107,6 +107,7 @@ int main( int argc, char *argv[] ) {
     // Manage Shared Memory Here
     sharedData->numClients = 0;
     strcpy(sharedData->letterBoard, letters);
+    sharedData->waitVal = 0;
 
     while (1) {
        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen);
@@ -180,46 +181,42 @@ void doprocessing (int sock) {
            if(sharedData->numClients < 2) status = write(sock, "Waiting on other players.\n", 28);
           // second case 2 players ready
           //waits for both players
-          while(sharedData->numClients < 2){}
-            if(sharedData->numClients == 2){
+          if(sharedData->numClients == 2){
               status = semop(semid, &Signal, 1);
-            }
           }
 
+          // Prints letterboard to server
           status = semop(semid, &Wait, 1);
-          //Should get Board
-          status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
-          //not printing board
           printf("-------------\n");
-          printf("%s",sharedData->letterBoard);
+          //printf("%s",sharedData->letterBoard);
           printf("-------------\n");
           status = semop(semid, &Signal, 1);
-          
+
+          // Sends letterboard to clients
+          status = semop(semid, &Wait, 1);
+          status = write(sock, sharedData->letterBoard, strlen(sharedData->letterBoard));
+          status = semop(semid, &Signal, 1);
+
+          // run the game
           rungame(sock);
     }
 }
 
 
 void rungame(sock){
-  int i = 0;
-  char buffer[1024];
-  //Starts player 0 turn
-  sharedData->ready = 0;
-  while(sharedData->numClients == 2){
-      //For turns we flip ready flag
-        //dont think we need semop if we use ready var
-        status = semop(semid, &Wait, 1);
-        while(read(sock,buffer,1024) == '\0'){}
-
-        for(i = 0; i < strlen(sharedData->letterBoard); i++){
+  while(1){
+      status = semop(semid, &Wait, 1);
+      read(sock,buffer,1024);
+      for(i = 0; i < strlen(sharedData->letterBoard); i++){
           printf("4");
           if(sharedData->letterBoard[i] == buffer[0]){
             printf("5");
             sharedData->letterBoard[i] = '-';
             printf("6");
           }
-          bzero(buffer,1024);
-        }
+      bzero(buffer,1024);
+      }
+      status = semop(semid, &Signal, 1);
   }
 
     //Stops here at semop...
