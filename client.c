@@ -30,7 +30,6 @@ void main()
                            {'I','J','K','L'},
                            {'M','N','O','P'}};
    int  port;
-   char host[16];
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
    char buffer[1024];   /* the message buffer*/
@@ -43,11 +42,11 @@ void main()
       exit (-1);
     }
     printf("created client socket successfully\n");
-
    /* before connecting the socket we need to set up the right         values in
    the different fields of the structure server_addr
    you can check the definition of this structure on your own*/
-   printf("Enter the server name to connect to (eg osnode02): \n");
+   char host[16];
+   printf("Enter the server name to connect to: (eg osnode02)\n");
    scanf("%s", &host);
    server = gethostbyname(host);
    if (server == NULL){
@@ -79,14 +78,12 @@ void main()
    char m[5];
    int go = 1;
    while(go) {
-      printf("Select \"y\" if you are ready. Or \"n\" to exit ");
+      printf("press y if you are ready. ");
       scanf("%c", &buffer);
-
-      if(buffer[0] == 'n' || buffer[0] == 'N'){
-        close(socketid);
-      }
-
-      else if(buffer[0] == 'y' || buffer[0] == 'Y'){
+      //bzero(buffer,1024);
+      //gets(buffer);
+      //fgets(buffer,1024,stdin);
+      if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          status = write(socketid, buffer, 1024);
          go = 0;
@@ -103,7 +100,7 @@ void main()
 
    // Clear buffer
    buffer[0] =  '\0';
-   /*
+
    printf("Choose a letter:\n");
    bzero(buffer,1024);
    fgets(buffer,1024,stdin);
@@ -113,21 +110,29 @@ void main()
    if (status < 0){
       printf("error while sending client message to server\n");
    }
-   /* Read server response
+   //Read server response
    bzero(buffer,1024);
    status = read(socketid, buffer, 1024);
    /* Upon successful completion, read() returns the number
    of bytes actually read from the file associated with fields.
-   This number is never greater than nbyte. Otherwise, -1 is returned.
+   This number is never greater than nbyte. Otherwise, -1 is returned. */
    if (status < 0) {
       perror("error while reading message from server");
       exit(1);
    }
-   /*
+
    printf("-------------\n");
    printf("%s",buffer);
    printf("-------------\n");
-   */
+   printf("Select a letter: \n");
+
+   while(go){
+      bzero(buffer,255);
+      fgets(buffer, 255, stdin);
+      status = write(socketid, buffer, 255);
+      status = read(socketid, buffer, 255);
+      printf("%s\nSelect a Letter: \n", buffer);
+   }
 
    /* this closes the socket*/
    close(socketid);
