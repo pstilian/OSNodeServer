@@ -188,6 +188,7 @@ void doprocessing (int sock) {
         if(buffer[0] == 'y'){
           // Increase the number of clients for each call
           sharedData->numClients++;
+          printf("%d Clients Connected", sharedData->numClients);
            // Check to see if at least 2 players are ready
            // first case if not enough players
           if(sharedData->numClients < 2) status = write(sock, "Waiting on other players.\n", 28);

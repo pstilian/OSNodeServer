@@ -125,6 +125,7 @@ int main( int argc, char *argv[] ) {
         }
         if (pid == 0) {
          /* This is the client process */
+            printf("New Client\n");
             close(sockfd);
             doprocessing(newsockfd);
             exit(0);
@@ -164,9 +165,8 @@ void doprocessing (int sock) {
     char buffer[1024];
     //Loop to keep socket running until correct input is recieved
     int go = 1;
-
+    printf("Waiting on ready...\n");
     while(go){
-        bzero(buffer,256);
         status = read(sock,buffer,255);
         // check to make sure status is good
         if(status < 0){
@@ -174,10 +174,13 @@ void doprocessing (int sock) {
           exit(1);
         }
 
+        bzero(buffer,256);
+
         // Checking to see if all clients are ready
         if(buffer[0] == 'y'){
           // Increase the number of clients for each call
           sharedData->numClients++;
+          printf("%d Clients Connected", sharedData->numClients);
            // Check to see if at least 2 players are ready
            // first case if not enough players
            if(sharedData->numClients < 2) status = write(sock, "Waiting on other players.\n", 28);
@@ -201,7 +204,7 @@ void doprocessing (int sock) {
 
           // run the game
           rungame(sock);
-    }
+      }
   }
 }
 
