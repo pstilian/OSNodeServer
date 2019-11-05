@@ -89,7 +89,7 @@ void main()
    printf("-------------\n");
 
    // Clear buffer
-   buffer[0] =  '\0';
+   bzero(buffer,1024);
 
    printf("Choose a letter:\n");
    bzero(buffer,1024);
