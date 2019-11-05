@@ -163,7 +163,7 @@ void doprocessing (int sock) {
     //Loop to keep socket running until correct input is recieved
     int go = 1;
 
-    status =
+    status = semop(semid, &Wait, 1);
 
     while(go){
         bzero(buffer,256);
@@ -217,5 +217,5 @@ void doprocessing (int sock) {
 }
 
 void game(){
-  
+
 }
