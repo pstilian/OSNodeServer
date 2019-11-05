@@ -92,29 +92,20 @@ void main()
 
    }
 
-   // This while loop causes the program to wait we need to replace this with a mutex/semaphore
-   go = 1;
-   while(go){
-      if(read(socketid,buffer,255) != '\0'){;
-         go = 0;
-      }
-   }
-   go = 1;
-
    // Prints the initial Gameboard
-   //printf("%s",buffer);
    bzero(buffer,255);
    status = read(socketid, buffer, 255);
 
    // Prints letterboard and ask for selection
    printf("%s\nSelect a Letter: \n", buffer);
 
+   // This while loop recieves input and displays up to date letterboard
    while(go){
       bzero(buffer,255);
       fgets(buffer, 255, stdin);
       status = write(socetid, buffer, 255);
       status = read(socketid, buffer, 255);
-      printf("%s\nSelect a Letter: \n", buffer);      
+      printf("%s\nSelect a Letter: \n", buffer);
    }
 
    /* this closes the socket*/
