@@ -82,6 +82,10 @@ void main()
    // Prints the initial Gameboard
    bzero(buffer,255);
    status = read(socketid, buffer, 255);
+   if (status < 0){
+     printf("error while reading message from server");
+     exit(1);
+    }
 
    // Prints letterboard and ask for selection
    printf("%s\nSelect a Letter: \n", buffer);
