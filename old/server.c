@@ -20,6 +20,13 @@ char gameBoardMap[4][4] =   {{'-','-','-','-'},
                              {'-','-','-','-'},
                              {'-','-','-','-'},
                              {'-','-','-','-'}};
+
+int scoreMap[4][4] =        {{4,6,2,1},
+                             {0,6,2,3},
+                             {8,4,9,1},
+                             {6,6,8,9}};
+
+
 void rungame(int sock);
 void doprocessing (int sock);
 char buffer[256];
@@ -79,13 +86,6 @@ int main( int argc, char *argv[] ) {
     ////////////////Old///////////
 }
 
-/*
-   Increased buffer size for processing client info using forloops
-   taking response using forloops and passing within buffer.
-   need to add Mutex or Semaphores and figure out second client.
-   Additionaly need to recieve updated matrix from server before mutex or 
-   semiphre swap to maintain correct state when entering critical section.
-*/
 void doprocessing (int sock) {
     int i = 0;
     int j = 0;
@@ -127,16 +127,17 @@ void doprocessing (int sock) {
      printf("Running game\n");
      char letter;
      int index;
+     //buffer needs ot be zeroed
+     bzero(buffer,256);
      while(1){
-         //bzero(buffer,256);
          status = read(sock, buffer, 256);
          if(status < 0) printf("READ error\n");
-         printf("Buffer is:%s:", buffer);
          letter = buffer[0];
          index = letter - 'a';
          i = index/4;
          j = index%4;
-         printf("%c -> %c\n",buffer[0], gameBoard[i][j]);
+         printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
+         bzero(buffer,256);
      }
 
     for(i = 0; i < 4; i++){

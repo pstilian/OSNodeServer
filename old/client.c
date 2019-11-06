@@ -69,6 +69,7 @@ void main()
    int go = 1;
    while(go) {
       printf("press y if you are ready. ");
+      while ((getchar()) != '\n'); 
       scanf("%c", &buffer);
       //bzero(buffer,256);
       //gets(buffer);
@@ -93,13 +94,15 @@ void main()
 
    printf("Choose a letter:\n");
    bzero(buffer,256);
-   fgets(buffer,256,stdin);
+   while ((getchar()) != '\n'); 
+   scanf("%c", &buffer);
+   printf("%s\n", buffer);
 
-   status = write(socketid, buffer, strlen(buffer));
-   printf("%d", status);
+   status = write(socketid, buffer, 256);
    if (status < 0){
       printf("error while sending client message to server\n");
    }
+   //------WE ARE HERE--------
    //Read server response
    bzero(buffer,256);
    status = read(socketid, buffer, 256);
@@ -118,9 +121,9 @@ void main()
 
    while(go){
       bzero(buffer,255);
-      fgets(buffer, 255, stdin);
+      while ((getchar()) != '\n'); 
+      scanf("%c", &buffer);
       status = write(socketid, buffer, 255);
-      status = read(socketid, buffer, 255);
       printf("%s\nSelect a Letter: \n", buffer);
    }
 
