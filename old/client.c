@@ -119,7 +119,7 @@ void main()
    printf("-------------\n");
    printf("Select a letter: \n");
 
-   while(go){
+   while(1){
       bzero(buffer,255);
       while ((getchar()) != '\n'); 
       scanf("%c", &buffer);
