@@ -137,6 +137,7 @@ void doprocessing (int sock) {
          i = index/4;
          j = index%4;
          printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
+         status = write(sock, buffer, 256);
          bzero(buffer,256);
      }
 

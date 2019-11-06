@@ -1,5 +1,12 @@
 // Peter Stilian, Donald Christensen, Jonathan Sellier, Emily Cardella
 
+/* this program shows how to create sockets for a client.
+it also shows how the client connects to a server socket.
+and sends a message to it. the server must already be running
+on a machine. The name of this machine must be entered in the function
+gethostbyname in the code below. The port number where the server is listening is
+specified in PORTNUM. This port number must also be specified in the server code.
+ * main program */
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -62,7 +69,7 @@ void main()
    int go = 1;
    while(go) {
       printf("press y if you are ready. ");
-      while ((getchar()) != '\n'); //DONT TOUCH THIS
+      while ((getchar()) != '\n'); 
       scanf("%c", &buffer);
       //bzero(buffer,256);
       //gets(buffer);
@@ -72,6 +79,7 @@ void main()
          status = write(socketid, buffer, 256);
          go = 0;
       }
+
    }
 
 
@@ -81,39 +89,9 @@ void main()
    printf("%s",buffer);
    printf("-------------\n");
 
-   // Clear buffer
-   bzero(buffer,256);
-
-   printf("Choose a letter:\n");
-   bzero(buffer,256);
-   while ((getchar()) != '\n'); //DONT DELETE THIS <3 JONO
-   scanf("%c", &buffer);
-   printf("%s\n", buffer);
-
-   status = write(socketid, buffer, 256);
-   if (status < 0){
-      printf("error while sending client message to server\n");
-   }
-   //------WE ARE HERE--------
-   //Read server response
-   bzero(buffer,256);
-   status = read(socketid, buffer, 256);
-   /* Upon successful completion, read() returns the number
-   of bytes actually read from the file associated with fields.
-   This number is never greater than nbyte. Otherwise, -1 is returned. */
-   if (status < 0) {
-      perror("error while reading message from server");
-      exit(1);
-   }
-
-   printf("-------------\n");
-   printf("%s",buffer);
-   printf("-------------\n");
-   printf("Select a letter: \n");
-
    while(1){
       bzero(buffer,255);
-      while ((getchar()) != '\n'); //DONT EFFING DELETE THIS PLEASE <3 JONO
+      while ((getchar()) != '\n'); 
       scanf("%c", &buffer);
       status = write(socketid, buffer, 255);
       printf("%s\nSelect a Letter: \n", buffer);
