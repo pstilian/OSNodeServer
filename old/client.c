@@ -1,12 +1,5 @@
 // Peter Stilian, Donald Christensen, Jonathan Sellier, Emily Cardella
 
-/* this program shows how to create sockets for a client.
-it also shows how the client connects to a server socket.
-and sends a message to it. the server must already be running
-on a machine. The name of this machine must be entered in the function
-gethostbyname in the code below. The port number where the server is listening is
-specified in PORTNUM. This port number must also be specified in the server code.
- * main program */
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -69,7 +62,7 @@ void main()
    int go = 1;
    while(go) {
       printf("press y if you are ready. ");
-      while ((getchar()) != '\n'); 
+      while ((getchar()) != '\n'); //DONT TOUCH THIS
       scanf("%c", &buffer);
       //bzero(buffer,256);
       //gets(buffer);
@@ -79,7 +72,6 @@ void main()
          status = write(socketid, buffer, 256);
          go = 0;
       }
-
    }
 
 
@@ -94,7 +86,7 @@ void main()
 
    printf("Choose a letter:\n");
    bzero(buffer,256);
-   while ((getchar()) != '\n'); 
+   while ((getchar()) != '\n'); //DONT DELETE THIS <3 JONO
    scanf("%c", &buffer);
    printf("%s\n", buffer);
 
@@ -121,7 +113,7 @@ void main()
 
    while(1){
       bzero(buffer,255);
-      while ((getchar()) != '\n'); 
+      while ((getchar()) != '\n'); //DONT EFFING DELETE THIS PLEASE <3 JONO
       scanf("%c", &buffer);
       status = write(socketid, buffer, 255);
       printf("%s\nSelect a Letter: \n", buffer);
