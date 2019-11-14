@@ -144,9 +144,21 @@ void doprocessing (int sock) {
          index = letter - 'a';
          i = index/4;
          j = index%4;
-         printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
-         status = write(sock, buffer, 256);
-         bzero(buffer,256);
+         //Trying here
+         if(gameBoard[i][j] != '-'){
+            printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
+            gameBoard[i][j] = '-';
+            status = write(sock, buffer, 256);
+            bzero(buffer,256);
+         }
+         else
+         {
+            printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
+            status = write(sock, buffer, 256);
+            bzero(buffer,256);
+         }
+         
+         
      }
 
     for(i = 0; i < 4; i++){

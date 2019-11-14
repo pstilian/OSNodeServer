@@ -1,5 +1,9 @@
 // Peter Stilian, Donald Christensen, Jonathan Sellier, Emily Cardella
 
+//Fixed issue with input being repeated
+//Created Print function to clean up code
+
+
 /* this program shows how to create sockets for a client.
 it also shows how the client connects to a server socket.
 and sends a message to it. the server must already be running
@@ -16,7 +20,25 @@ specified in PORTNUM. This port number must also be specified in the server code
 #include<netdb.h>
 #define PORTNUM  10101 /* the port number that the server is listening to*/
 #define DEFAULT_PROTOCOL 0  /*constant for default protocol*/
+char gameBoard[4][4]=       {{'a','b','c','d'},
+                             {'e','f','g','h'},
+                             {'i','j','k','l'},
+                             {'m','n','o','p'}};
 
+//Print board function
+void printBoard(char playerMove){
+   int i = 0;
+   int j = 0;
+   for(i = 0; i < 4; i++){
+         for(j = 0; j < 4; j++){
+            if(gameBoard[i][j] == playerMove){
+               gameBoard[i][j] = '-';
+            }
+            printf(" %c ", gameBoard[i][j]);
+         }
+         printf("\n");
+      }
+}
 void main()
 {
    int  port;
@@ -67,63 +89,37 @@ void main()
 
    char m[5];
    int go = 1;
+   //check if user is ready
    while(go) {
       printf("press y if you are ready. ");
+      while ((getchar()) != '\n'); 
       scanf("%c", &buffer);
-      //bzero(buffer,1024);
-      //gets(buffer);
-      //fgets(buffer,1024,stdin);
       if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          status = write(socketid, buffer, 256);
          go = 0;
       }
-
    }
 
-
-   //bzero(buffer,1024);
+   //bzero(buffer,256);
    status = read(socketid, buffer, 256);
+   //prints buffer
    printf("-------------\n");
    printf("%s",buffer);
    printf("-------------\n");
-
-   // Clear buffer
-   bzero(buffer,256);
-
-   printf("Choose a letter:\n");
-   bzero(buffer,256);
-   fgets(buffer,256,stdin);
-
-   status = write(socketid, buffer, 256);
-   printf("%d", status);
-   if (status < 0){
-      printf("error while sending client message to server\n");
-   }
-   //Read server response
-   bzero(buffer,256);
-   status = read(socketid, buffer, 256);
-   /* Upon successful completion, read() returns the number
-   of bytes actually read from the file associated with fields.
-   This number is never greater than nbyte. Otherwise, -1 is returned. */
-   if (status < 0) {
-      perror("error while reading message from server");
-      exit(1);
-   }
-
-   printf("-------------\n");
-   printf("%s",buffer);
-   printf("-------------\n");
-   printf("Select a letter: \n");
 
    while(1){
-      bzero(buffer,256);
-      fgets(buffer, 256, stdin);
-      status = write(socketid, buffer, 256);
-      status = read(socketid, buffer, 256);
+      bzero(buffer,255);
+      while ((getchar()) != '\n');
       printf("%s\nSelect a Letter: \n", buffer);
+      scanf("%c", &buffer);
+      printBoard(buffer[0]);
+      status = write(socketid, buffer, 255);
    }
 
    /* this closes the socket*/
    close(socketid);
 }
+
+
+
