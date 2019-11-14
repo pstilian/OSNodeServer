@@ -37,30 +37,34 @@ int main( int argc, char *argv[] ) {
     int sockfd, newsockfd, portno, clilen;
     struct sockaddr_in serv_addr, cli_addr;
     int status, pid;
+
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM,DEFAULT_PROTOCOL );
     if (sockfd < 0) {
         perror("ERROR opening socket");
         exit(1);
     }
+
     /* Initialize socket structure */
     bzero((char *) &serv_addr, sizeof(serv_addr));
     portno = PORTNUM;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
+
     /* Now bind the host address using bind() call.*/
-    status =  bind(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)); 
+    status =  bind(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr));
     if (status < 0) {
       perror("ERROR on binding");
       exit(1);
     }
-    /* Now Server starts listening clients wanting to connect. No more than 5 
+    /* Now Server starts listening clients wanting to connect. No more than 5
     clients allowed */
     listen(sockfd,5);
     int i = 0;
     clilen = sizeof(cli_addr);
-    /////////////////old////////////////
+
+    // Create forks for each new client
     while (1) {
        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen);
        if (newsockfd < 0) {
@@ -82,8 +86,7 @@ int main( int argc, char *argv[] ) {
         else {
             close(newsockfd);
         }
-    } /* end of while */
-    ////////////////Old///////////
+    }
 }
 
 void doprocessing (int sock) {
@@ -92,6 +95,7 @@ void doprocessing (int sock) {
     int k = 0;
     int status;
     bzero(buffer,256);
+
     //Loop to keep socket running until correct input is recieved
     int go = 1;
     while(go){
@@ -102,8 +106,6 @@ void doprocessing (int sock) {
             go = 0;
         }
     }
-    //bzero(buffer,1024);
-    //status = write(sock, buffer, 1024);
 
     //Fills buffer with board.
     for(i = 0; i < 4; i++){
@@ -116,10 +118,13 @@ void doprocessing (int sock) {
             }
         }
     }
+
+    // Print the board on server
     k = 0;
     printf("-------------\n");
     printf("%s",buffer);
     printf("-------------\n");
+
     //Sends board in buffer to player
     status = write(sock,buffer,256);
 
@@ -127,8 +132,11 @@ void doprocessing (int sock) {
      printf("Running game\n");
      char letter;
      int index;
+
      //buffer needs ot be zeroed
      bzero(buffer,256);
+
+     // Read 
      while(1){
          status = read(sock, buffer, 256);
          if(status < 0) printf("READ error\n");
