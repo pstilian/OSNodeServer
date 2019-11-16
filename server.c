@@ -20,6 +20,8 @@ typedef struct
 {
     int scores[5];
     int count;
+    int sockArray[5];
+    int sockArrIdx;
 }shared_mem;
 shared_mem *playerInfo;
 
@@ -47,6 +49,7 @@ int scoreMap[4][4] =        {{4,6,2,1},
 void printBoard(int i, int j);
 void rungame(int sock);
 void doprocessing (int sock, int pid);
+void announceWinner();
 char buffer[256];
 
 int main( int argc, char *argv[] ) {
@@ -72,6 +75,8 @@ int main( int argc, char *argv[] ) {
         perror ("shmat");
         exit (0);
     }
+    
+    playerInfo->sockArrIdx = 0; //init index of sockets
     ////////////////End of SharedMemory setup /////////////////////
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM,DEFAULT_PROTOCOL );
@@ -117,6 +122,7 @@ int main( int argc, char *argv[] ) {
             exit(0);
         }
         else {
+            playerInfo->sockArray[playerInfo->sockArrIdx++] = pid; //add the socket to the array
             close(newsockfd);
         }
     } /* end of while */
@@ -137,6 +143,8 @@ void doprocessing (int sock, int pid) {
             bzero(buffer,256);
             printf("Im Ready! \n");
             playerInfo->count++;
+            buffer[0] = 0;
+            status = write(sock,buffer,256);
             go = 0;
         }
     }
@@ -184,6 +192,8 @@ void rungame(int sock){
         int i = index/4;
         int j = index%4;
         printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
+        if(gameBoard[i][j]!=gameBoardMap[i][j])buffer[0] = scoreMap[i][j]; //add score to buffer
+        else buffer[0]=0; //if already selected no change in score
         gameBoard[i][j] = gameBoardMap[i][j];
         //changes the board to the players choice successfully for one player so far 
         //have not checked out multiplayer yet.
@@ -201,5 +211,9 @@ void printBoard(int i, int j){
         printf("\n");
     }
     printf("----------\n");
+}
+
+void announceWinner(){
+    //todo
 }
 

@@ -102,12 +102,13 @@ void main()
    }
 
    //bzero(buffer,256);
-   status = read(socketid, buffer, 256);
+   
    //prints buffer
    printf("-------------\n");
    printf("%s",buffer);
    printf("-------------\n");
-
+   int score = -65; //idk why it jus tworks
+   status = read(socketid, buffer, 256);
    while(1){
       bzero(buffer,255);
       while ((getchar()) != '\n');
@@ -115,6 +116,9 @@ void main()
       scanf("%c", &buffer);
       printBoard(buffer[0]);
       status = write(socketid, buffer, 255);
+      status = read(socketid, buffer, 256);
+      score+= buffer[0];
+      printf("Score: %d", score);
    }
 
    /* this closes the socket*/
