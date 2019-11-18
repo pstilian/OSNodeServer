@@ -23,15 +23,11 @@ typedef struct
     int sockArray[5];
     int sockArrIdx;
     int totalMoves;
+    char gameBoard[4][4];
 }shared_mem;
 shared_mem *playerInfo;
 
-//Initialized a matrix and testMap that needs ints
-char gameBoard[4][4]=       {{'A','B','C','D'},
-                             {'E','F','G','H'},
-                             {'I','J','K','L'},
-                             {'M','N','O','P'}};
-                             
+                         
 char gameBoardMap[4][4] =   {{'4','6','2','1'},
                              {'0','6','2','3'},
                              {'8','4','9','1'},
@@ -69,6 +65,13 @@ int main( int argc, char *argv[] ) {
     }
     playerInfo->sockArrIdx = 0; //init index of sockets
     playerInfo->totalMoves = 0; //init moves
+    //Initialized a matrix and testMap that needs ints
+    int eye, jay;
+    char letter = 'A';
+    for(eye = 0; eye<4; eye++) for(jay=0; jay<4;jay++){
+        playerInfo->gameBoard[eye][jay] = letter++;
+    }
+    
     ////////////////End of SharedMemory setup /////////////////////
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM,DEFAULT_PROTOCOL );
@@ -144,7 +147,7 @@ void doprocessing (int sock, int pid) {
 
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
-            buffer[k] = gameBoard[i][j];
+            buffer[k] = playerInfo->gameBoard[i][j];
             k++;
             if(j == 3){
                 buffer[k] = '\n';
@@ -181,9 +184,17 @@ void rungame(int sock){
         printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
         bzero(buffer, 256);
         buffer[0] = 1;
-        if(gameBoard[i][j]!=gameBoardMap[i][j]) buffer[1] = scoreMap[i][j]; //add score to buffer
-        else buffer[1]=0; //if already selected no change in score
-        gameBoard[i][j] = gameBoardMap[i][j];
+        if(playerInfo->gameBoard[i][j]!=gameBoardMap[i][j]) buffer[1] = scoreMap[i][j]; //add score to buffer
+        else{
+            playerInfo->totalMoves--;
+            buffer[1]=0; //if already selected no change in score
+        }
+        playerInfo->gameBoard[i][j] = gameBoardMap[i][j];
+        //send gameBoard to buffer
+        int idx;
+        for(idx = 0; idx<16; idx++){
+            buffer[100+idx] = playerInfo->gameBoard[idx/4][idx%4];
+        }
         //Increments moves, had it origonaly in shared memory, however we ran into 
         //unnown issues, so i made playerInfo->totalMovesoves globalto resolve problem.
         playerInfo->totalMoves++;
@@ -203,7 +214,7 @@ void printBoard(int i, int j){
     printf("----------\n");
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
-            printf("%c ", gameBoard[i][j]);
+            printf("%c ", playerInfo->gameBoard[i][j]);
         }
         printf("\n");
     }

@@ -30,19 +30,17 @@ void endGame(int sock){
 }
 
 //Print board function
-void printBoard(char playerMove){
+void printBoard(){
    int i = 0;
    int j = 0;
    for(i = 0; i < 4; i++){
          for(j = 0; j < 4; j++){
-            if(gameBoard[i][j] == playerMove){
-               gameBoard[i][j] = '-';
-            }
             printf(" %c ", gameBoard[i][j]);
          }
          printf("\n");
       }
 }
+
 void main()
 {
    int  port;
@@ -119,7 +117,6 @@ void main()
       while ((getchar()) != '\n');
       printf("%s\nSelect a Letter: \n", buffer);
       scanf("%c", &buffer);
-      printBoard(buffer[0]);
       status = write(socketid, buffer, 255);
       status = read(socketid, buffer, 256);
       if(buffer[0] == 1) {
@@ -128,6 +125,11 @@ void main()
          if(buffer[2]>=16){
             go = 0;
          }
+         int idx;
+         for(idx = 0; idx<16; idx++){
+            gameBoard[idx/4][idx%4] = buffer[100+idx];
+         }
+         printBoard();
       } else {
          printf("%s\n", buffer);
       }
