@@ -25,11 +25,7 @@ typedef struct
 }shared_mem;
 shared_mem *playerInfo;
 
-
-
-
 //Initialized a matrix and testMap that needs ints
-
 char gameBoard[4][4]=       {{'A','B','C','D'},
                              {'E','F','G','H'},
                              {'I','J','K','L'},
@@ -45,17 +41,15 @@ int scoreMap[4][4] =        {{4,6,2,1},
                              {8,4,9,1},
                              {6,6,8,9}};
 
-
+int totalMoves = 0;
 void printBoard(int i, int j);
 void rungame(int sock);
 void doprocessing (int sock, int pid);
-void announceWinner();
+void announceWinner(int sock);
 char buffer[256];
 
 int main( int argc, char *argv[] ) {
-
     //int client_size[6];
-    
     int sockfd, newsockfd, portno, clilen;
     struct sockaddr_in serv_addr, cli_addr;
     int status, pid;
@@ -65,17 +59,14 @@ int main( int argc, char *argv[] ) {
     char* shmadd;
     shmadd = (char*)0;
 
-
     if((shmid = shmget (SHMKEY, sizeof(int), IPC_CREAT | 0666)) < 0){
         perror ("shmget");
         exit (1);
     }
-
     if ((playerInfo = (shared_mem *) shmat (shmid, shmadd, 0)) == (shared_mem *) -1){
         perror ("shmat");
         exit (0);
     }
-    
     playerInfo->sockArrIdx = 0; //init index of sockets
     ////////////////End of SharedMemory setup /////////////////////
     /* First call to socket() function */
@@ -116,7 +107,6 @@ int main( int argc, char *argv[] ) {
         }
         if (pid == 0) {
          /* This is the client process */
-            
             close(sockfd);
             doprocessing(newsockfd, pid);
             exit(0);
@@ -148,7 +138,6 @@ void doprocessing (int sock, int pid) {
             go = 0;
         }
     }
-
     //Fills buffer with board.
     //create sendBoard function;
 
@@ -173,7 +162,6 @@ void doprocessing (int sock, int pid) {
     //Needs to wait for input
      printf("Running game\n");
 
-
      bzero(buffer,256);
      
      while(1){
@@ -181,9 +169,7 @@ void doprocessing (int sock, int pid) {
          rungame(sock);
          pid = signal(&status);
      }
-
 }
-
 void rungame(int sock){
         int status = read(sock, buffer, 256);
         if(status < 0) printf("READ error\n");
@@ -195,11 +181,18 @@ void rungame(int sock){
         if(gameBoard[i][j]!=gameBoardMap[i][j])buffer[0] = scoreMap[i][j]; //add score to buffer
         else buffer[0]=0; //if already selected no change in score
         gameBoard[i][j] = gameBoardMap[i][j];
+        //Increments moves, had it origonaly in shared memory, however we ran into 
+        //unnown issues, so i made totalMoves globalto resolve problem.
+        totalMoves++;
+        //totalMoves++;
         //changes the board to the players choice successfully for one player so far 
         //have not checked out multiplayer yet.
         printBoard(i,j);
         status = write(sock, buffer, 256);
         bzero(buffer,256);
+        
+        announceWinner(sock);
+        //printf("\nPlayer info: %d", playerInfo->totalMoves);
 }
 
 void printBoard(int i, int j){
@@ -213,7 +206,30 @@ void printBoard(int i, int j){
     printf("----------\n");
 }
 
-void announceWinner(){
+void announceWinner(sock){
     //todo
+    //Keeps record of scores and player moves,
+    //if playerMoves > 15 then a winner is named
+    //and a message is sent.
+    //Function is made to run  in a loop with its own internal conditional check.
+    int i = 0;
+    int pastScore = 0;
+    int winner = 0;
+    int status = 0;
+    char newBuff[14] = "Player i wins!";
+    printf("Player Move number: %d \n", totalMoves);
+    if(totalMoves == 16){
+        
+        for(i = 0; i < 5; i++){
+            if(playerInfo->scores[i] > pastScore){
+                pastScore = playerInfo->scores[i];
+                winner = i;
+            }
+        }
+        newBuff[7] = '0' + winner;
+        printf("\n  --PLAYER %d WINS-- \n", winner);
+        //printf("%s", newBuff);
+        //status = write(sock,newBuff,256);
+    }
 }
 
