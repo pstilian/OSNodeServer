@@ -207,14 +207,14 @@ void printBoard(int i, int j){
 }
 
 //turn selection function
-void turnselection(){
+/*void turnselection(){
     //multiple clients access game at same time without conflict
     //clients recognize and make moves
     //5 clients (players) with unique IDs
     
     
     
-}
+}*/
     
 void announceWinner(sock){
     //todo
