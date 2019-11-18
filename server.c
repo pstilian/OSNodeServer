@@ -206,6 +206,16 @@ void printBoard(int i, int j){
     printf("----------\n");
 }
 
+//turn selection function
+void turnselection(){
+    //multiple clients access game at same time without conflict
+    //clients recognize and make moves
+    //5 clients (players) with unique IDs
+    
+    
+    
+}
+    
 void announceWinner(sock){
     //todo
     //Keeps record of scores and player moves,
