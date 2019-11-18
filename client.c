@@ -25,6 +25,10 @@ char gameBoard[4][4]=       {{'a','b','c','d'},
                              {'i','j','k','l'},
                              {'m','n','o','p'}};
 
+void endGame(int sock){
+   printf("Game end");
+}
+
 //Print board function
 void printBoard(char playerMove){
    int i = 0;
@@ -107,9 +111,10 @@ void main()
    printf("-------------\n");
    printf("%s",buffer);
    printf("-------------\n");
-   int score = -65; //idk why it jus tworks
+   int score = 0; //idk why it jus tworks
    status = read(socketid, buffer, 256);
-   while(1){
+   go = 1;
+   while(go){
       bzero(buffer,255);
       while ((getchar()) != '\n');
       printf("%s\nSelect a Letter: \n", buffer);
@@ -117,12 +122,20 @@ void main()
       printBoard(buffer[0]);
       status = write(socketid, buffer, 255);
       status = read(socketid, buffer, 256);
-      score+= buffer[0];
-      printf("Score: %d", score);
+      if(buffer[0] == 1) {
+         score+= buffer[1];
+         printf("Score: %d\n", score);
+         if(buffer[2]>=16){
+            go = 0;
+         }
+      } else {
+         printf("%s\n", buffer);
+      }
    }
-
-   /* this closes the socket*/
+   
+   endGame(socketid);
    close(socketid);
+   /* this closes the socket*/
 }
 
 

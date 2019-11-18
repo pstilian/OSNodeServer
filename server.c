@@ -22,6 +22,7 @@ typedef struct
     int count;
     int sockArray[5];
     int sockArrIdx;
+    int totalMoves;
 }shared_mem;
 shared_mem *playerInfo;
 
@@ -41,7 +42,6 @@ int scoreMap[4][4] =        {{4,6,2,1},
                              {8,4,9,1},
                              {6,6,8,9}};
 
-int totalMoves = 0;
 void printBoard(int i, int j);
 void rungame(int sock);
 void doprocessing (int sock, int pid);
@@ -68,6 +68,7 @@ int main( int argc, char *argv[] ) {
         exit (0);
     }
     playerInfo->sockArrIdx = 0; //init index of sockets
+    playerInfo->totalMoves = 0; //init moves
     ////////////////End of SharedMemory setup /////////////////////
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM,DEFAULT_PROTOCOL );
@@ -178,12 +179,15 @@ void rungame(int sock){
         int i = index/4;
         int j = index%4;
         printf("%c -> %d\n",buffer[0], scoreMap[i][j]);
-        if(gameBoard[i][j]!=gameBoardMap[i][j])buffer[0] = scoreMap[i][j]; //add score to buffer
-        else buffer[0]=0; //if already selected no change in score
+        bzero(buffer, 256);
+        buffer[0] = 1;
+        if(gameBoard[i][j]!=gameBoardMap[i][j]) buffer[1] = scoreMap[i][j]; //add score to buffer
+        else buffer[1]=0; //if already selected no change in score
         gameBoard[i][j] = gameBoardMap[i][j];
         //Increments moves, had it origonaly in shared memory, however we ran into 
-        //unnown issues, so i made totalMoves globalto resolve problem.
-        totalMoves++;
+        //unnown issues, so i made playerInfo->totalMovesoves globalto resolve problem.
+        playerInfo->totalMoves++;
+        buffer[2] = playerInfo->totalMoves;
         //totalMoves++;
         //changes the board to the players choice successfully for one player so far 
         //have not checked out multiplayer yet.
@@ -227,8 +231,8 @@ void announceWinner(sock){
     int winner = 0;
     int status = 0;
     char newBuff[14] = "Player i wins!";
-    printf("Player Move number: %d \n", totalMoves);
-    if(totalMoves == 16){
+    printf("Player Move number: %d \n", playerInfo->totalMoves);
+    if(playerInfo->totalMoves == 16){
         
         for(i = 0; i < 5; i++){
             if(playerInfo->scores[i] > pastScore){

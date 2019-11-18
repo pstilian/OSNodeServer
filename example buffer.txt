@@ -1,0 +1,2 @@
+FOR SCORE AND MOVE INFO buffer = {1, <score>, <moves>, ...,<pos99>, <board 0 if move made 1 if now>,}
+FOR TEXT TO BE DISPLAYED buffer = "Text here"
