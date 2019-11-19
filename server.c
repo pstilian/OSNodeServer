@@ -243,7 +243,7 @@ void announceWinner(sock){
     int status = 0;
     char newBuff[14] = "Player i wins!";
     printf("Player Move number: %d \n", playerInfo->totalMoves);
-    if(playerInfo->totalMoves == 16){
+    if(playerInfo->totalMoves > 15){
         
         for(i = 0; i < 5; i++){
             if(playerInfo->scores[i] > pastScore){
@@ -253,6 +253,14 @@ void announceWinner(sock){
         }
         newBuff[7] = '0' + winner;
         printf("\n  --PLAYER %d WINS-- \n", winner);
+        printf("Resetting...\n");
+        int eye, jay;
+        char letter = 'A';
+        for(eye = 0; eye<4; eye++) for(jay=0; jay<4;jay++){
+            playerInfo->gameBoard[eye][jay] = letter++;
+        }
+        for(eye = 0; eye < 5; eye++)playerInfo->scores[eye]=0;
+        playerInfo->totalMoves = 0;
         //printf("%s", newBuff);
         //status = write(sock,newBuff,256);
     }

@@ -99,6 +99,7 @@ void main()
       if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
          status = write(socketid, buffer, 256);
+         status = read(socketid,buffer,256);
          go = 0;
       }
    }
@@ -107,7 +108,7 @@ void main()
    
    //prints buffer
    printf("-------------\n");
-   printf("%s",buffer);
+   printf("%s\n",buffer);
    printf("-------------\n");
    int score = 0; //idk why it jus tworks
    status = read(socketid, buffer, 256);
@@ -124,6 +125,10 @@ void main()
          printf("Score: %d\n", score);
          if(buffer[2]>=16){
             go = 0;
+            endGame(socketid);
+            status = read(socketid, buffer, 256);
+            printf("%s\nEnter 1 to keep playing: ",buffer);
+            scanf("%d", &go);
          }
          int idx;
          for(idx = 0; idx<16; idx++){
@@ -135,7 +140,6 @@ void main()
       }
    }
    
-   endGame(socketid);
    close(socketid);
    /* this closes the socket*/
 }
