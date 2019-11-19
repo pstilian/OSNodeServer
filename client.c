@@ -89,7 +89,7 @@ void main()
    /* Read server response */
    bzero(buffer,256);
 
-   char m[5];
+   char restartGame[5];
    int go = 1;
    //check if user is ready
    while(go) {
@@ -120,9 +120,15 @@ void main()
       scanf("%c", &buffer);
       status = write(socketid, buffer, 255);
       status = read(socketid, buffer, 256);
+
       if(buffer[0] == 1) {
          score+= buffer[1];
          printf("Score: %d\n", score);
+         int idx;
+         for(idx = 0; idx<16; idx++){
+            gameBoard[idx/4][idx%4] = buffer[100+idx];
+         }
+         printBoard();
          if(buffer[2]>=16){
             go = 0;
             endGame(socketid);
@@ -130,18 +136,19 @@ void main()
             printf("%s\nEnter 1 to keep playing: ",buffer);
             scanf("%d", &go);
          }
-         int idx;
+         //int idx;
+         /*
          for(idx = 0; idx<16; idx++){
             gameBoard[idx/4][idx%4] = buffer[100+idx];
          }
-         printBoard();
+         */
+         //printBoard();
       } else {
          printf("%s\n", buffer);
       }
    }
-   
-   close(socketid);
    /* this closes the socket*/
+   close(socketid);
 }
 
 
