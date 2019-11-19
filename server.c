@@ -26,8 +26,7 @@ typedef struct
     char gameBoard[4][4];
 }shared_mem;
 shared_mem *playerInfo;
-
-                         
+                      
 char gameBoardMap[4][4] =   {{'4','6','2','1'},
                              {'0','6','2','3'},
                              {'8','4','9','1'},
@@ -221,15 +220,6 @@ void printBoard(int i, int j){
     printf("----------\n");
 }
 
-//turn selection function
-/*void turnselection(){
-    //multiple clients access game at same time without conflict
-    //clients recognize and make moves
-    //5 clients (players) with unique IDs
-    
-    
-    
-}*/
     
 void announceWinner(sock){
     //todo
