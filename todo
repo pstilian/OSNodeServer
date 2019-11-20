@@ -11,3 +11,4 @@ DONE   	Server displays values and board
 DONE  	Server sends Client board
 DONE  	Client displays board sent
 DONE   	Clients exit after board is recieved and displayed
+DONE    Client is prompted to restart game, and game restarts

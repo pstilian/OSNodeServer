@@ -24,6 +24,8 @@ char gameBoard[4][4]=       {{'a','b','c','d'},
                              {'e','f','g','h'},
                              {'i','j','k','l'},
                              {'m','n','o','p'}};
+//redeclered as a global
+char buffer[256];
 
 void endGame(int sock){
    printf("Game end");
@@ -46,7 +48,7 @@ void main()
    int  port;
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
-   char buffer[256];   /* the message buffer*/
+   //char buffer[256];   /* the message buffer*/
    struct sockaddr_in serv_addr;
    struct hostent *server;
    /* this creates the socket*/
@@ -111,6 +113,7 @@ void main()
    printf("%s\n",buffer);
    printf("-------------\n");
    int score = 0; //idk why it jus tworks
+   char checkBuff;
    status = read(socketid, buffer, 256);
    go = 1;
    while(go){
@@ -129,10 +132,10 @@ void main()
             gameBoard[idx/4][idx%4] = buffer[100+idx];
          }
          printBoard();
-         if(buffer[2]>=16){
+         if(buffer[2] == 'z'){
             go = 0;
             endGame(socketid);
-            status = read(socketid, buffer, 256);
+            //status = read(socketid, buffer, 256);
             printf("%s\nEnter 1 to keep playing: ",buffer);
             scanf("%d", &go);
          }

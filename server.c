@@ -197,7 +197,10 @@ void rungame(int sock){
         //Increments moves, had it origonaly in shared memory, however we ran into 
         //unnown issues, so i made playerInfo->totalMovesoves globalto resolve problem.
         playerInfo->totalMoves++;
-        buffer[2] = playerInfo->totalMoves;
+        if(playerInfo->totalMoves >= 16){
+            buffer[2] = 'z';
+        }
+        
         //totalMoves++;
         //changes the board to the players choice successfully for one player so far 
         //have not checked out multiplayer yet.
