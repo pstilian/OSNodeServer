@@ -96,7 +96,7 @@ void main()
    //check if user is ready
    while(go) {
       printf("press y if you are ready. ");
-      while ((getchar()) != '\n'); 
+      while ((getchar()) != '\n');
       scanf("%c", &buffer);
       if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
@@ -107,18 +107,20 @@ void main()
    }
 
    //bzero(buffer,256);
-   
    //prints buffer
-   printf("-------------\n");
-   printf("%s\n",buffer);
-   printf("-------------\n");
+   //printf("-------------\n");
+   //printf("%s\n",buffer);
+   //printf("-------------\nA B C D\nE F G H\nI J K L\nM N O P\n-------------\n");
+   //printf("-------------\n");
    int score = 0; //idk why it jus tworks
    char checkBuff;
    status = read(socketid, buffer, 256);
+   printBoard();
    go = 1;
    int currGame = 0;
    while(go){
       bzero(buffer,255);
+      //printBoard();
       while ((getchar()) != '\n');
       printf("%s\nSelect a Letter: \n", buffer);
       scanf("%c", &buffer);
@@ -131,8 +133,12 @@ void main()
             score = 0;
             printf("Game over! Player %d won\n", buffer[151]);
             currGame = buffer[150];
-            printf("Enter 1 to keep playing: ");
+            printf("Enter 1 to keep playing or 0 to exit: ");
             scanf("%d", &go);
+            if(go == 1){
+              printf("-------------\nA B C D\nE F G H\nI J K L\nM N O P\n-------------\n");
+              buffer[2] = 0;
+          }
          }
          score+= buffer[1];
          printf("Score: %d\n", score);
@@ -154,13 +160,14 @@ void main()
             currGame = buffer[150];
             //status = read(socketid, buffer, 256);
             printf("Game over! Player %d won\n", buffer[2]);
-            printf("Enter 1 to keep playing: ");
+            printf("Enter 1 to keep playing or 0 to exit: ");
             scanf("%d", &go);
+            if(go == 1){
+              printf("-------------\nA B C D\nE F G H\nI J K L\nM N O P\n-------------\n");
+              buffer[2] = 0;
+            }
          }
    }
    /* this closes the socket*/
    close(socketid);
 }
-
-
-
