@@ -96,7 +96,7 @@ void main()
    //check if user is ready
    while(go) {
       printf("press y if you are ready. ");
-      while ((getchar()) != '\n'); 
+      while ((getchar()) != '\n');
       scanf("%c", &buffer);
       if(buffer[0] == 'y' || buffer[0] == 'Y'){
          buffer[0] = 'y';
@@ -107,7 +107,7 @@ void main()
    }
 
    //bzero(buffer,256);
-   
+
    //prints buffer
    printf("-------------\n");
    printf("%s\n",buffer);
@@ -139,13 +139,7 @@ void main()
             printf("%s\nEnter 1 to keep playing: ",buffer);
             scanf("%d", &go);
          }
-         //int idx;
-         /*
-         for(idx = 0; idx<16; idx++){
-            gameBoard[idx/4][idx%4] = buffer[100+idx];
-         }
-         */
-         //printBoard();
+
       } else {
          printf("%s\n", buffer);
       }
@@ -153,6 +147,3 @@ void main()
    /* this closes the socket*/
    close(socketid);
 }
-
-
-
