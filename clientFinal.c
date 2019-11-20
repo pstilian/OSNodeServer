@@ -147,13 +147,7 @@ void main()
             gameBoard[idx/4][idx%4] = buffer[100+idx];
          }
          printBoard();
-         //int idx;
-         /*
-         for(idx = 0; idx<16; idx++){
-            gameBoard[idx/4][idx%4] = buffer[100+idx];
-         }
-         */
-         //printBoard();
+
       } else if(buffer[0] == 'z'){
             score = 0;
             go = 0;
@@ -165,6 +159,12 @@ void main()
             if(go == 1){
               printf("-------------\nA B C D\nE F G H\nI J K L\nM N O P\n-------------\n");
               buffer[2] = 0;
+            }
+            if(go == 0){
+              buffer[7] = 1;
+              status = write(socketid, buffer, 255);
+              close(socketid);
+              exit(0);
             }
          }
    }

@@ -28,7 +28,7 @@ typedef struct
     int pastwinner;
 }shared_mem;
 shared_mem *playerInfo;
-                      
+
 char gameBoardMap[4][4] =   {{'4','6','2','1'},
                              {'0','6','2','3'},
                              {'8','4','9','1'},
@@ -48,7 +48,6 @@ char buffer[256];
 int winner = 0;
 
 int main( int argc, char *argv[] ) {
-    //int client_size[6];
     int sockfd, newsockfd, portno, clilen;
     struct sockaddr_in serv_addr, cli_addr;
     int status, pid;
@@ -78,12 +77,12 @@ int main( int argc, char *argv[] ) {
     playerInfo->gameNum = 0;
     playerInfo->pastwinner = 0;
     //Initialized a matrix and testMap that needs ints
-    
+
     char letter = 'A';
     for(eye = 0; eye<4; eye++) for(jay=0; jay<4;jay++){
         playerInfo->gameBoard[eye][jay] = letter++;
     }
-    
+
     ////////////////End of SharedMemory setup /////////////////////
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM,DEFAULT_PROTOCOL );
@@ -98,17 +97,17 @@ int main( int argc, char *argv[] ) {
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
     /* Now bind the host address using bind() call.*/
-    status =  bind(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)); 
+    status =  bind(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr));
     if (status < 0) {
       perror("ERROR on binding");
       exit(1);
     }
-    /* Now Server starts listening clients wanting to connect. No more than 5 
+    /* Now Server starts listening clients wanting to connect. No more than 5
     clients allowed */
     listen(sockfd,5);
     int i = 0;
     clilen = sizeof(cli_addr);
-    /////////////////old////////////////
+
     while (1) {
        newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen);
        if (newsockfd < 0) {
@@ -135,8 +134,7 @@ int main( int argc, char *argv[] ) {
             close(newsockfd);
             playerInfo->sockArrIdx++;
         }
-    } /* end of while */
-    ////////////////Old///////////
+    }
 }
 
 void doprocessing (int sock, int pid, int id) {
@@ -159,8 +157,6 @@ void doprocessing (int sock, int pid, int id) {
         }
     }
     //Fills buffer with board.
-    //create sendBoard function;
-
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
             buffer[k] = playerInfo->gameBoard[i][j];
@@ -214,11 +210,11 @@ void rungame(int sock, int id){
         printf("\n");
         playerInfo->gameBoard[i][j] = gameBoardMap[i][j];
         //send gameBoard to buffer
-        
+
         for(idx = 0; idx<16; idx++){
             buffer[100+idx] = playerInfo->gameBoard[idx/4][idx%4];
         }
-        //Increments moves, had it origonaly in shared memory, however we ran into 
+        //Increments moves, had it origonaly in shared memory, however we ran into
         //unnown issues, so i made playerInfo->totalMovesoves globalto resolve problem.
         playerInfo->totalMoves++;
         if(playerInfo->totalMoves >= 16){
@@ -233,7 +229,7 @@ void rungame(int sock, int id){
             buffer[2] = winner;
             playerInfo->pastwinner = winner;
             playerInfo->gameNum++;
-            
+
             printf("Resetting...\n");
         int eye, jay;
         char letter = 'A';
@@ -245,16 +241,11 @@ void rungame(int sock, int id){
 
         }
         buffer[151] = playerInfo->pastwinner;
-        
-        //totalMoves++;
-        //changes the board to the players choice successfully for one player so far 
-        //have not checked out multiplayer yet.
+
+        //changes the board to the players choice successfully
         printBoard(i,j);
         status = write(sock, buffer, 256);
         bzero(buffer,256);
-        
-        //announceWinner(sock);
-        //printf("\nPlayer info: %d", playerInfo->totalMoves);
 }
 
 void printBoard(int i, int j){
@@ -268,7 +259,6 @@ void printBoard(int i, int j){
     printf("----------\n");
 }
 
-    
 void announceWinner(sock){
     //todo
     //Keeps record of scores and player moves,
@@ -282,7 +272,7 @@ void announceWinner(sock){
     char newBuff[14] = "Player i wins!";
     printf("Player Move number: %d \n", playerInfo->totalMoves);
     if(playerInfo->totalMoves > 15){
-        
+
         for(i = 0; i < 5; i++){
             if(playerInfo->scores[i] > pastScore){
                 pastScore = playerInfo->scores[i];
@@ -299,8 +289,5 @@ void announceWinner(sock){
         }
         for(eye = 0; eye < 5; eye++)playerInfo->scores[eye]=0;
         playerInfo->totalMoves = 0;
-        //printf("%s", newBuff);
-        //status = write(sock,newBuff,256);
     }
 }
-
