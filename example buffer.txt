@@ -1,2 +1,2 @@
-FOR SCORE AND MOVE INFO buffer = {1, <score>, <moves>, ...,<pos99>, <board content>, <pos115>, ...}
+FOR SCORE AND MOVE INFO buffer = {1, <score>, <moves>, ...,<pos99>, <board content>, <pos116>, ..., <winner>}
 FOR TEXT TO BE DISPLAYED buffer = "Text here"
