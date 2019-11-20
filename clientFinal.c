@@ -48,7 +48,6 @@ void main()
    int  port;
    int  socketid;      /*will hold the id of the socket created*/
    int  status;        /* error status holder*/
-   //char buffer[256];   /* the message buffer*/
    struct sockaddr_in serv_addr;
    struct hostent *server;
    /* this creates the socket*/
@@ -106,12 +105,6 @@ void main()
       }
    }
 
-   //bzero(buffer,256);
-   //prints buffer
-   //printf("-------------\n");
-   //printf("%s\n",buffer);
-   //printf("-------------\nA B C D\nE F G H\nI J K L\nM N O P\n-------------\n");
-   //printf("-------------\n");
    int score = 0; //idk why it jus tworks
    char checkBuff;
    status = read(socketid, buffer, 256);
@@ -120,7 +113,6 @@ void main()
    int currGame = 0;
    while(go){
       bzero(buffer,255);
-      //printBoard();
       while ((getchar()) != '\n');
       printf("%s\nSelect a Letter: \n", buffer);
       scanf("%c", &buffer);
