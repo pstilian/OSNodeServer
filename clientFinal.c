@@ -9,8 +9,8 @@ it also shows how the client connects to a server socket.
 and sends a message to it. the server must already be running
 on a machine. The name of this machine must be entered in the function
 gethostbyname in the code below. The port number where the server is listening is
-specified in PORTNUM. This port number must also be specified in the server code.
- * main program */
+specified in PORTNUM. This port number must also be specified in the server code. */
+/* main program */
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -20,6 +20,7 @@ specified in PORTNUM. This port number must also be specified in the server code
 #include<netdb.h>
 #define PORTNUM  10101 /* the port number that the server is listening to*/
 #define DEFAULT_PROTOCOL 0  /*constant for default protocol*/
+
 char gameBoard[4][4]=       {{'a','b','c','d'},
                              {'e','f','g','h'},
                              {'i','j','k','l'},
@@ -46,8 +47,8 @@ void printBoard(){
 void main()
 {
    int  port;
-   int  socketid;      /*will hold the id of the socket created*/
-   int  status;        /* error status holder*/
+   int  socketid; //will hold the id of the socket created
+   int  status; //error status holder
    struct sockaddr_in serv_addr;
    struct hostent *server;
    /* this creates the socket*/
@@ -57,7 +58,7 @@ void main()
       exit (-1);
     }
     printf("created client socket successfully\n");
-   /* before connecting the socket we need to set up the right         values in
+   /* before connecting the socket we need to set up the right values in
    the different fields of the structure server_addr
    you can check the definition of this structure on your own*/
    char host[16];
@@ -69,7 +70,7 @@ void main()
       exit(0);
    }
    port = PORTNUM;
-/*This function is used to initialize the socket structures with null values. */
+   /*This function is used to initialize the socket structures with null values. */
    bzero((char *) &serv_addr, sizeof(serv_addr));
    serv_addr.sin_family = AF_INET;
    bcopy((char *)server->h_addr,
@@ -77,14 +78,13 @@ void main()
          server->h_length);
    serv_addr.sin_port = htons(port);
    /* connecting the client socket to the server socket */
-   status = connect(socketid, (struct sockaddr *) &serv_addr,
-                            sizeof(serv_addr));
+   status = connect(socketid, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
    if (status < 0){
       printf( " error in connecting client socket with server    \n");
       exit(-1);
    }
     printf("connected client socket to the server socket \n");
-   /* now lets send a message to the server. the message will be
+   /* now let's send a message to the server. The message will be
    whatever the user wants to write to the server.*/
 
    /* Read server response */
@@ -105,7 +105,7 @@ void main()
       }
    }
 
-   int score = 0; //idk why it jus tworks
+   int score = 0; //debugging addition
    char checkBuff;
    status = read(socketid, buffer, 256);
    printBoard();
@@ -120,7 +120,7 @@ void main()
       status = read(socketid, buffer, 256);
 
       if(buffer[0] == 1) {
-         if(buffer[150] > currGame){ //someone won, new game
+         if(buffer[150] > currGame){ //begin new game if a player won
             go = 0;
             score = 0;
             printf("Game over! Player %d won\n", buffer[151]);
