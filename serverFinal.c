@@ -12,7 +12,7 @@
 #include<sys/types.h>
 #include<sys/ipc.h>
 #include<sys/shm.h>
-#define PORTNUM  10101 /* the port number the server will listen to*/
+#define PORTNUM  10101 /*the port number the server will listen to*/
 #define DEFAULT_PROTOCOL 0  /*constant for default protocol*/
 #define SHMKEY ((key_t) 7890)
 
@@ -29,11 +29,13 @@ typedef struct
 }shared_mem;
 shared_mem *playerInfo;
 
+//create gameboard
 char gameBoardMap[4][4] =   {{'4','6','2','1'},
                              {'0','6','2','3'},
                              {'8','4','9','1'},
                              {'6','6','8','9'}};
 
+//create map for player scored
 int scoreMap[4][4] =        {{4,6,2,1},
                              {0,6,2,3},
                              {8,4,9,1},
@@ -68,11 +70,11 @@ int main( int argc, char *argv[] ) {
 
     int eye, jay;
 
-    playerInfo->sockArrIdx = 0; //init index of sockets
-    playerInfo->totalMoves = 0; //init moves
+    playerInfo->sockArrIdx = 0; //initial index of sockets
+    playerInfo->totalMoves = 0; //initial moves
     for(eye = 0; eye<4; eye++){
         playerInfo->sockArray[eye] = 0;
-        playerInfo->scores[eye] = 0; //init score to 0
+        playerInfo->scores[eye] = 0; //initial score to 0
     }
     playerInfo->gameNum = 0;
     playerInfo->pastwinner = 0;
@@ -114,14 +116,14 @@ int main( int argc, char *argv[] ) {
          perror("ERROR on accept");
          exit(1);
         }
-      /* Create child process */
+        /* Create child process */
         pid = fork();
         if (pid < 0) {
             perror("ERROR on fork");
             exit(1);
         }
         if (pid == 0) {
-         /* This is the client process */
+            /* This is the client process */
             close(sockfd);
             doprocessing(newsockfd,pid, playerInfo->sockArrIdx);
             exit(0);
@@ -143,7 +145,7 @@ void doprocessing (int sock, int pid, int id) {
     int k = 0;
     int status;
     bzero(buffer,256);
-    //Loop to keep socket running until correct input is recieved
+    //Loop to keep socket running until correct input is received
     int go = 1;
     while(go){
         status = read(sock,buffer,256);
@@ -156,7 +158,7 @@ void doprocessing (int sock, int pid, int id) {
             go = 0;
         }
     }
-    //Fills buffer with board.
+    //Fills buffer with board
     for(i = 0; i < 4; i++){
         for(j = 0; j < 4; j++){
             buffer[k] = playerInfo->gameBoard[i][j];
@@ -173,7 +175,7 @@ void doprocessing (int sock, int pid, int id) {
     printf("-------------\n");
     //Sends board in buffer to player
     status = write(sock,buffer,256);
-    //waits for two players.
+    //waits for two players
     while(playerInfo->count < 2){};
     //Needs to wait for input
      printf("Running game\n");
@@ -214,8 +216,8 @@ void rungame(int sock, int id){
         for(idx = 0; idx<16; idx++){
             buffer[100+idx] = playerInfo->gameBoard[idx/4][idx%4];
         }
-        //Increments moves, had it origonaly in shared memory, however we ran into
-        //unnown issues, so i made playerInfo->totalMovesoves globalto resolve problem.
+        //Increments moves, had it originally in shared memory, however we ran into
+        //unknown issues, so i made playerInfo->totalMovesoves globalto resolve problem.
         playerInfo->totalMoves++;
         if(playerInfo->totalMoves >= 16){
             buffer[0] = 'z';
@@ -242,7 +244,7 @@ void rungame(int sock, int id){
         }
         buffer[151] = playerInfo->pastwinner;
 
-        //changes the board to the players choice successfully
+        //changes the board to the players choice
         printBoard(i,j);
         status = write(sock, buffer, 256);
         bzero(buffer,256);
@@ -260,11 +262,10 @@ void printBoard(int i, int j){
 }
 
 void announceWinner(sock){
-    //todo
-    //Keeps record of scores and player moves,
+    //Keeps record of scores and player moves
     //if playerMoves > 15 then a winner is named
-    //and a message is sent.
-    //Function is made to run  in a loop with its own internal conditional check.
+    //winner is diplayed on screen
+    //Function is made to run in a loop with its own internal conditional check
     int i = 0;
     int pastScore = 0;
     int winner = 0;
@@ -272,7 +273,6 @@ void announceWinner(sock){
     char newBuff[14] = "Player i wins!";
     printf("Player Move number: %d \n", playerInfo->totalMoves);
     if(playerInfo->totalMoves > 15){
-
         for(i = 0; i < 5; i++){
             if(playerInfo->scores[i] > pastScore){
                 pastScore = playerInfo->scores[i];
